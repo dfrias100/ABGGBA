@@ -4,28 +4,28 @@
 #include "wxInclude.h"
 
 enum ControlFrameEventID {
-	FileLoad = 1,
-	StartEmu = 2,
-	PauseEmu = 3,
-	StopEmu = 4
+    FileLoad = 1,
+    StartEmu = 2,
+    PauseEmu = 3,
+    StopEmu = 4
 };
 
 class ControlFrame : public wxFrame {
 public:
-	ControlFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
-	void AddConfig(std::shared_ptr<wxFileConfig> pwxfcAppConfig);
+    ControlFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
+    void AddConfig(std::shared_ptr<wxFileConfig> pwxfcAppConfig);
 private:
-	std::shared_ptr<wxFileConfig> m_pwfcAppConfig;
+    std::shared_ptr<wxFileConfig> m_pwfcAppConfig;
 
-	wxMenuBar* m_pwmbFrameMenuBar;
+    wxMenuBar* m_pwmbFrameMenuBar;
 
-	wxMenu* m_pwmFrameFileMenu;
-	wxMenu* m_pwmFrameControlMenu;
+    wxMenu* m_pwmFrameFileMenu;
+    wxMenu* m_pwmFrameControlMenu;
 
-	/*void OnStart(wxCommandEvent& evt);
-	void OnPause(wxCommandEvent& evt);
-	void OnStop(wxCommandEvent& evt);*/
-	void OnExit(wxCommandEvent& evt);
+    /*void OnStart(wxCommandEvent& evt);
+    void OnPause(wxCommandEvent& evt);
+    void OnStop(wxCommandEvent& evt);*/
+    void OnExit(wxCommandEvent& evt);
 };
 
 #endif

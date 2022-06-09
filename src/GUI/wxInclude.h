@@ -5,7 +5,7 @@
 #include <wx/fileconf.h>
 
 #ifndef WX_PREC
-	#include <wx/wx.h>
+    #include <wx/wx.h>
 #endif
 
 #endif
