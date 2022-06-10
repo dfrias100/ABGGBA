@@ -27,7 +27,10 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ==============================================================================+*/
 
+#include <cstdint>
+
 #include "ControlFrame.h"
+#include "../Renderer/Renderer.h"
 
 const wxString ControlFrame::m_wszWINDOW_TITLE = L"About ABGGBA";
 const wxString ControlFrame::m_wszAPP_TITLE = L"ABGGBA";
@@ -91,7 +94,7 @@ ControlFrame::ControlFrame(const wxString& title, const wxPoint& pos, const wxSi
     // TODO: Setup Emulator
 }
 
-void ControlFrame::AddConfig(std::shared_ptr<wxFileConfig> pwxfcAppConfig) {
+void ControlFrame::AddConfig(std::shared_ptr<wxFileConfig>& pwxfcAppConfig) {
     m_pwfcAppConfig = pwxfcAppConfig;
 }
 

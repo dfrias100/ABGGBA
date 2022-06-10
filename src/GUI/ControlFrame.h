@@ -26,6 +26,8 @@
 #ifndef CONTROL_FRAME_H
 #define CONTROL_FRAME_H
 
+#include <memory>
+
 #include "wxInclude.h"
 #include <wx/hyperlink.h>
 #include <wx/statbox.h>
@@ -60,7 +62,7 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 class ControlFrame : public wxFrame {
 public:
     ControlFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
-    void AddConfig(std::shared_ptr<wxFileConfig> pwxfcAppConfig);
+    void AddConfig(std::shared_ptr<wxFileConfig>& pwxfcAppConfig);
 private:
     // String constants for about dialog
     static const wxString m_wszWINDOW_TITLE;

@@ -1,9 +1,10 @@
 /*+==============================================================================
-  File:      ABGGBA.h
+  File:      Renderer.h
 
-  Summary:   Defines the ABGGBA class to be used as the wxEntry point
+  Summary:   Defines the Renderer, SDL2 wrapper, class to handle windowing
+	     and drawing
 
-  Classes:   ABGGBA
+  Classes:   Renderer
 
   ABGGBA: Nintendo Game Boy Advance emulator using wxWidgets and SDL2
   Copyright(C) 2022  Daniel Frias
@@ -23,33 +24,42 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ==============================================================================+*/
 
-#ifndef ABGGBA_H
-#define ABGGBA_H
+#ifndef RENDERER_H
+#define RENDERER_H
 
 #include <memory>
+#include <cstdint>
 
-#include "GUI/wxInclude.h"
-#include "GUI/ControlFrame.h"
+#include <SDL.h>
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
-  Class:    ABGGBA
+  Class:    Renderer
 
-  Summary:  wxApp-derived class to facilitate the loading of the GUIs
-            and config
+  Summary:  Class to wrap SDL2 functions into simple function calls
 
-  Methods:  OnInit
-              Setup the GUI and load the config file
-            OnExit
-              Flushes the config file changes to storage
+  Methods:  Renderer
+              Constructor.
+              Initializes the SDL window and texture to be used
+              as the framebuffer.
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
-class ABGGBA : public wxApp {
-    ControlFrame* m_pControlFrame;
-    std::shared_ptr<wxFileConfig> m_pwfcAppConfig;
+class Renderer {
 public:
-    virtual bool OnInit() override;
-    virtual int OnExit() override;
+    Renderer();
+    ~Renderer();
+
+    void StartWindowing();
+    void StopWindowing();
+    void AttachFramebuffer(uint32_t*& pGfxArray);
+    void Draw();
+private:
+    SDL_Window* m_pSdlWindow;
+    SDL_Renderer* m_pSdlRenderer;
+    SDL_Texture* m_pSdlFramebuffer;
+
+    uint32_t* m_pGfxArray;
+    uint32_t* punPixels;
+    const int m_nPITCH = 240 * sizeof(uint32_t);
 };
 
-wxIMPLEMENT_APP_NO_MAIN(ABGGBA);
-
 #endif
+

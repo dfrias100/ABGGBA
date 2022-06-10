@@ -26,6 +26,7 @@
 ==============================================================================+*/
 
 #include "ABGGBA.h"
+#include <SDL.h>
 
 bool ABGGBA::OnInit() {
     m_pControlFrame = new ControlFrame("ABGGBA", wxPoint(50, 50), wxSize(300, 300));
@@ -38,5 +39,6 @@ bool ABGGBA::OnInit() {
 
 int ABGGBA::OnExit() {
     m_pwfcAppConfig->Flush();
+    SDL_Quit();
     return 0;
 }

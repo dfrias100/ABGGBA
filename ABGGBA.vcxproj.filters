@@ -19,6 +19,12 @@
     <Filter Include="Header Files\GUI">
       <UniqueIdentifier>{30479c0b-e49f-4012-9363-779646e8d748}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Renderer">
+      <UniqueIdentifier>{646e00d2-91f6-486f-ba2d-47f97c149568}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Renderer">
+      <UniqueIdentifier>{91b7af7d-f66d-47f4-a0e5-723240ff69df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -30,6 +36,9 @@
     <ClCompile Include="src\ABGGBA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Renderer\Renderer.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GUI\ControlFrame.h">
@@ -40,6 +49,9 @@
     </ClInclude>
     <ClInclude Include="src\ABGGBA.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\Renderer.h">
+      <Filter>Header Files\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
