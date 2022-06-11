@@ -100,8 +100,8 @@ ControlFrame::ControlFrame(const wxString& title, const wxPoint& pos, const wxSi
     m_pEmulator = std::make_unique<Emulator>(this);
 }
 
-void ControlFrame::AddConfig(std::shared_ptr<wxFileConfig>& pwxfcAppConfig) {
-    m_pwfcAppConfig = pwxfcAppConfig;
+void ControlFrame::AddConfig(std::shared_ptr<wxFileConfig>& pwfcAppConfig) {
+    m_pwfcAppConfig = pwfcAppConfig;
 }
 
 void ControlFrame::SendCloseEventToEmulator() {

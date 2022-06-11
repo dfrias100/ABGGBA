@@ -27,7 +27,8 @@
 #include "Renderer.h"
 
 Renderer::Renderer() {
-    m_pSdlWindow = SDL_CreateWindow("ABGGBA", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 3 * 240, 3 * 160, SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE);
+    m_pSdlWindow = SDL_CreateWindow("ABGGBA", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+					m_nWinSizeMultiplier * 240, m_nWinSizeMultiplier * 160, SDL_WINDOW_HIDDEN);
     m_pSdlRenderer = SDL_CreateRenderer(m_pSdlWindow, -1, SDL_RENDERER_ACCELERATED);
     m_pSdlFramebuffer = SDL_CreateTexture(m_pSdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, 240, 160);
 }

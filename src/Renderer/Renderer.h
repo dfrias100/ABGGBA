@@ -28,6 +28,8 @@
 #define RENDERER_H
 
 #include <memory>
+#include <chrono>
+#include <cmath>
 #include <cstdint>
 
 #include <SDL.h>
@@ -41,6 +43,21 @@
               Constructor.
               Initializes the SDL window and texture to be used
               as the framebuffer.
+            ~Renderer
+              Destructor.
+              Cleans up the SDL window data structures
+            StartWindowing
+              Sets the window to shown
+            StopWindowing
+              Sets the window to hidden
+            AttachFramebuffer
+              Attaches a pointer to the pixel buffer used by the
+              GBA components
+            Draw
+              Draws the pixel buffer
+            CapFramerate
+              Templated method to allow a fast way to cap the
+              framerate
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 class Renderer {
 public:
@@ -51,6 +68,11 @@ public:
     void StopWindowing();
     void AttachFramebuffer(uint32_t*& pGfxArray);
     void Draw();
+
+    template <int Framerate>
+    void CapFramerate(std::chrono::steady_clock::time_point timStart);
+
+    uint32_t m_nWinSizeMultiplier = 4;
 private:
     SDL_Window* m_pSdlWindow;
     SDL_Renderer* m_pSdlRenderer;

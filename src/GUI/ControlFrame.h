@@ -66,7 +66,7 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 class ControlFrame : public wxFrame {
 public:
     ControlFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
-    void AddConfig(std::shared_ptr<wxFileConfig>& pwxfcAppConfig);
+    void AddConfig(std::shared_ptr<wxFileConfig>& pwfcAppConfig);
     void SendCloseEventToEmulator();
 private:
     // String constants for about dialog
