@@ -71,7 +71,8 @@ ControlFrame::ControlFrame(const wxString& title, const wxPoint& pos, const wxSi
     m_pwmFrameControlMenu->Append(ControlFrameEventID::PauseEmu, "&Pause");
     m_pwmFrameControlMenu->Append(ControlFrameEventID::StopEmu, "&Stop");
 
-    // Disable pause and stop as no ROM has been loaded here
+    // Disable all emulator controls as no ROM has been loaded here
+    m_pwmFrameControlMenu->Enable(ControlFrameEventID::StartEmu, false);
     m_pwmFrameControlMenu->Enable(ControlFrameEventID::PauseEmu, false);
     m_pwmFrameControlMenu->Enable(ControlFrameEventID::StopEmu, false);
 
@@ -90,12 +91,56 @@ ControlFrame::ControlFrame(const wxString& title, const wxPoint& pos, const wxSi
     // TODO: Add all bind calls
     Bind(wxEVT_COMMAND_MENU_SELECTED, &ControlFrame::OnExit, this, wxID_EXIT);
     Bind(wxEVT_COMMAND_MENU_SELECTED, &ControlFrame::OnAbout, this, wxID_ABOUT);
+    Bind(wxEVT_COMMAND_MENU_SELECTED, &ControlFrame::OnStart, this, ControlFrameEventID::StartEmu);
+    Bind(wxEVT_COMMAND_MENU_SELECTED, &ControlFrame::OnPause, this, ControlFrameEventID::PauseEmu);
+    Bind(wxEVT_COMMAND_MENU_SELECTED, &ControlFrame::OnStop, this, ControlFrameEventID::StopEmu);
+    Bind(wxEVT_COMMAND_MENU_SELECTED, &ControlFrame::OnLoad, this, ControlFrameEventID::FileLoad);
 
     // TODO: Setup Emulator
+    m_pEmulator = std::make_unique<Emulator>(this);
 }
 
 void ControlFrame::AddConfig(std::shared_ptr<wxFileConfig>& pwxfcAppConfig) {
     m_pwfcAppConfig = pwxfcAppConfig;
+}
+
+void ControlFrame::SendCloseEventToEmulator() {
+    wxCommandEvent* wceSdlClosedEvent = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED);
+    wceSdlClosedEvent->SetId(ControlFrameEventID::StopEmu);
+    QueueEvent(wceSdlClosedEvent);
+}
+
+void ControlFrame::OnStart(wxCommandEvent& evt) {
+    SetToStartControls();
+    m_pEmulator->StartEmulation();
+}
+
+void ControlFrame::OnPause(wxCommandEvent& WXUNUSED(evt)) {
+    SetToStartControls();
+    m_pwmFrameControlMenu->Enable(ControlFrameEventID::PauseEmu, true);
+    wxMenuItem* pwmiPauseItem = m_pwmFrameControlMenu->FindChildItem(ControlFrameEventID::PauseEmu);
+
+    if (!m_pEmulator->IsPaused()) {
+	pwmiPauseItem->SetItemLabel("&Unpause");
+	m_pEmulator->PauseEmulation();
+	Connect(wxEVT_IDLE, wxIdleEventHandler(ControlFrame::OnIdle), nullptr, this);
+    } else {
+	pwmiPauseItem->SetItemLabel("&Pause");
+	m_pEmulator->UnPauseEmulation();
+	Disconnect(wxEVT_IDLE, wxIdleEventHandler(ControlFrame::OnIdle), nullptr, this);
+    }
+}
+
+void ControlFrame::OnStop(wxCommandEvent& evt) {
+    ResetControls();
+    m_pEmulator->StopEmulation();
+    Disconnect(wxEVT_IDLE, wxIdleEventHandler(ControlFrame::OnIdle), nullptr, this);
+}
+
+void ControlFrame::OnLoad(wxCommandEvent& evt) {
+    // TODO: Load ROM file, for now just enable start control
+    if (!m_pEmulator->IsRunning())
+	ResetControls();
 }
 
 void ControlFrame::OnExit(wxCommandEvent& WXUNUSED(evt)) {
@@ -104,6 +149,17 @@ void ControlFrame::OnExit(wxCommandEvent& WXUNUSED(evt)) {
 
 void ControlFrame::OnAbout(wxCommandEvent& WXUNUSED(evt)) {
     m_pwdAboutDialog->ShowModal();
+}
+
+void ControlFrame::OnIdle(wxIdleEvent& evt) {
+    SDL_Event sdlEvent;
+    while (SDL_PollEvent(&sdlEvent)) {
+	if (sdlEvent.type == SDL_WINDOWEVENT &&
+	    sdlEvent.window.event == SDL_WINDOWEVENT_CLOSE) {
+	    printf("MAIN: closing sdl windows\n");
+	    SendCloseEventToEmulator();
+	}
+    }
 }
 
 void ControlFrame::InitAboutDialog() {
@@ -177,4 +233,16 @@ void ControlFrame::InitAboutDialog() {
     pwbtnOkButton->SetFocusFromKbd();
 
     // All we have to do now is call ShowModal() from another function
+}
+
+void ControlFrame::ResetControls() {
+    m_pwmFrameControlMenu->Enable(ControlFrameEventID::StartEmu, true);
+    m_pwmFrameControlMenu->Enable(ControlFrameEventID::StopEmu, false);
+    m_pwmFrameControlMenu->Enable(ControlFrameEventID::PauseEmu, false);
+}
+
+void ControlFrame::SetToStartControls() {
+    m_pwmFrameControlMenu->Enable(ControlFrameEventID::StartEmu, false);
+    m_pwmFrameControlMenu->Enable(ControlFrameEventID::PauseEmu, true);
+    m_pwmFrameControlMenu->Enable(ControlFrameEventID::StopEmu, true);
 }

@@ -28,6 +28,7 @@
 
 #include <memory>
 
+#include "../Emulator/Emulator.h"
 #include "wxInclude.h"
 #include <wx/hyperlink.h>
 #include <wx/statbox.h>
@@ -35,11 +36,14 @@
 // TODO: add this to wxInclude header
 #include <wx/textctrl.h>
 
+class Emulator;
+
 enum ControlFrameEventID {
     FileLoad = 1,
     StartEmu = 2,
     PauseEmu = 3,
-    StopEmu = 4
+    StopEmu = 4,
+    IdleGui = 5
 };
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
@@ -63,6 +67,7 @@ class ControlFrame : public wxFrame {
 public:
     ControlFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
     void AddConfig(std::shared_ptr<wxFileConfig>& pwxfcAppConfig);
+    void SendCloseEventToEmulator();
 private:
     // String constants for about dialog
     static const wxString m_wszWINDOW_TITLE;
@@ -77,19 +82,24 @@ private:
 
     std::shared_ptr<wxFileConfig> m_pwfcAppConfig;
     std::unique_ptr<wxDialog> m_pwdAboutDialog;
+    std::unique_ptr<Emulator> m_pEmulator;
 
     wxMenuBar* m_pwmbFrameMenuBar;
 
     wxMenu* m_pwmFrameFileMenu;
     wxMenu* m_pwmFrameControlMenu;
 
-    /*void OnStart(wxCommandEvent& evt);
+    void OnStart(wxCommandEvent& evt);
     void OnPause(wxCommandEvent& evt);
-    void OnStop(wxCommandEvent& evt);*/
+    void OnStop(wxCommandEvent& evt);
+    void OnLoad(wxCommandEvent& evt);
     void OnExit(wxCommandEvent& evt);
     void OnAbout(wxCommandEvent& evt);
+    void OnIdle(wxIdleEvent& evt);
 
     void InitAboutDialog();
+    void ResetControls();
+    void SetToStartControls();
 };
 
 #endif

@@ -151,12 +151,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ABGGBA.cpp" />
+    <ClCompile Include="src\Emulator\Emulator.cpp" />
     <ClCompile Include="src\GUI\ControlFrame.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Renderer\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ABGGBA.h" />
+    <ClInclude Include="src\Emulator\Emulator.h" />
     <ClInclude Include="src\GUI\ControlFrame.h" />
     <ClInclude Include="src\GUI\wxInclude.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
