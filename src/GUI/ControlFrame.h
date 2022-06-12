@@ -50,18 +50,18 @@ enum ControlFrameEventID {
   Class:    ControlFrame
 
   Summary:  wxFrame-derived class to facilitate the functions of the
-            GUI and to manage the state of emulation.
+	    GUI and to manage the state of emulation.
 
   Methods:  ControlFrame
-              Constructor.
-              Allocates the GUI and sets up its layout with default
-              configuration as well as initializes the Emulator class.
-            OnExit
-              Catches the "Quit" button event in the GUI.
-            OnAbout
-              Displays the about wxDialog
-            InitAboutDialog
-              Sets up the data structures to display the about dialog.
+	      Constructor.
+	      Allocates the GUI and sets up its layout with default
+	      configuration as well as initializes the Emulator class.
+	    OnExit
+	      Catches the "Quit" button event in the GUI.
+	    OnAbout
+	      Displays the about wxDialog
+	    InitAboutDialog
+	      Sets up the data structures to display the about dialog.
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 class ControlFrame : public wxFrame {
 public:

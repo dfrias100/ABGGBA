@@ -31,6 +31,18 @@
     <Filter Include="Source Files\Emulator">
       <UniqueIdentifier>{0307ff46-5901-4382-a0bf-a9f07e22c23c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{650d3692-c30e-4c11-ae63-35882d6dfbee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core\GBA">
+      <UniqueIdentifier>{77612300-1043-43af-9b1a-42656243643d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{763ad0cf-4800-413c-b8fc-f42463861c49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\GBA">
+      <UniqueIdentifier>{a937b034-0ae2-44a8-ad55-93247d5e9fec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -48,6 +60,9 @@
     <ClCompile Include="src\Emulator\Emulator.cpp">
       <Filter>Source Files\Emulator</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\GBA\GBA.cpp">
+      <Filter>Source Files\Core\GBA</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GUI\ControlFrame.h">
@@ -64,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="src\Emulator\Emulator.h">
       <Filter>Header Files\Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\GBA\GBA.h">
+      <Filter>Header Files\Core\GBA</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

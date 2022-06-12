@@ -1,8 +1,9 @@
 /*+==============================================================================
-  File:      main.cpp
+  File:      GBA.cpp
 
-  Summary:   The entry point of the emulator, here the SDL2 library will be init-
-	     -ialized and wxEntry will be called at the end of the function.
+  Summary:   Defines the GBA class' methods.
+
+  Classes:   GBA
 
   ABGGBA: Nintendo Game Boy Advance emulator using wxWidgets and SDL2
   Copyright(C) 2022  Daniel Frias
@@ -22,27 +23,4 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ==============================================================================+*/
 
-#include "GUI/wxInclude.h"
-#include <SDL.h>
-
-#if defined(WIN32) && defined(_DEBUG)
-    #define _CRTDBG_MAP_ALLOC
-    #include <stdlib.h>
-    #include <crtdbg.h>
-#endif
-
-int main(int argc, char* argv[]) {
-    // TODO: Initialize SDL subsystems
-
-#if defined(WIN32) && defined(_DEBUG)
-    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-#endif
-
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_EVENTS) != 0) {
-	// TODO: make this a wx message box
-	std::cerr << "Unable to initialize SDL: " << SDL_GetError() << std::endl;
-	return 1;
-    }
-
-    return wxEntry(argc, argv);
-}
+#include "GBA.h"

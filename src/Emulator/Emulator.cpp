@@ -6,7 +6,9 @@
   Classes:   Emulator
 
   Functions: Emulator::StartEmulation, Emulator::PauseEmulation, 
-	     Emulator::UnPauseEmulation, Emulator::StopEmulation
+	     Emulator::UnPauseEmulation, Emulator::StopEmulation 
+	     Emulator::IsPaused, Emulator::IsRunning, 
+	     Emulator::DoEmulation, Emulator::PauseUntilNotify
 
   ABGGBA: Nintendo Game Boy Advance emulator using wxWidgets and SDL2
   Copyright(C) 2022  Daniel Frias

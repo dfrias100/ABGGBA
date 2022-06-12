@@ -35,12 +35,12 @@
   Class:    ABGGBA
 
   Summary:  wxApp-derived class to facilitate the loading of the GUIs
-            and config
+	    and config
 
   Methods:  OnInit
-              Setup the GUI and load the config file
-            OnExit
-              Flushes the config file changes to storage
+	      Setup the GUI and load the config file
+	    OnExit
+	      Flushes the config file changes to storage
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 class ABGGBA : public wxApp {
     ControlFrame* m_pControlFrame;

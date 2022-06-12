@@ -151,6 +151,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ABGGBA.cpp" />
+    <ClCompile Include="src\Core\GBA\GBA.cpp" />
     <ClCompile Include="src\Emulator\Emulator.cpp" />
     <ClCompile Include="src\GUI\ControlFrame.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -158,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ABGGBA.h" />
+    <ClInclude Include="src\Core\GBA\GBA.h" />
     <ClInclude Include="src\Emulator\Emulator.h" />
     <ClInclude Include="src\GUI\ControlFrame.h" />
     <ClInclude Include="src\GUI\wxInclude.h" />

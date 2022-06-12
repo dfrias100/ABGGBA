@@ -1,7 +1,7 @@
 /*+==============================================================================
   File:      Emulator.h
 
-  Summary:   Defines the methods of the Emulator class.
+  Summary:   Defines the Emulator class.
 
   Classes:   Emulator
 
@@ -40,33 +40,33 @@ class ControlFrame;
   Class:    Emulator
 
   Summary:  wxFrame-derived class to facilitate the functions of the
-            GUI and to manage the state of emulation.
+	    GUI and to manage the state of emulation.
 
   Methods:  Emulator
-              Constructor.
-              Allocates the renderer and takes in a ControlFrame
-              pointer so that the emulator thread can call to it
-            ~Emulator
-              Destructor.
-              Stops a running thread (if it is running) and de-
-              allocates the renderer
-            StartEmulation
-              Creates a thread that conducts the emulation loop
-            PauseEmulation
-              Causes the thread to wait until the condition
-              variable condition is true
-            UnPauseEmulation
-              Wakes up the emulation thread to continue
-            IsPaused
-              Returns the paused boolean
-            IsRunning
-              Returns a boolean denoting if the thread
-              is joinable
-            DoEmulation
-              See the .cpp file detailing this method
-            PauseUntilNotify
-              Wait until the condition variable condition
-              is met
+	      Constructor.
+	      Allocates the renderer and takes in a ControlFrame
+	      pointer so that the emulator thread can call to it
+	    ~Emulator
+	      Destructor.
+	      Stops a running thread (if it is running) and de-
+	      allocates the renderer
+	    StartEmulation
+	      Creates a thread that conducts the emulation loop
+	    PauseEmulation
+	      Causes the thread to wait until the condition
+	      variable condition is true
+	    UnPauseEmulation
+	      Wakes up the emulation thread to continue
+	    IsPaused
+	      Returns the paused boolean
+	    IsRunning
+	      Returns a boolean denoting if the thread
+	      is joinable
+	    DoEmulation
+	      See the .cpp file detailing this method
+	    PauseUntilNotify
+	      Wait until the condition variable condition
+	      is met
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 class Emulator {
 public:

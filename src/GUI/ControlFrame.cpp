@@ -6,7 +6,7 @@
   Classes:   ControlFrame
 
   Functions: ControlFrame::ControlFrame, ControlFrame::AddConfig,   
-             ControlFrame::OnExit, ControlFrame::OnAbout, 
+	     ControlFrame::OnExit, ControlFrame::OnAbout, 
 	     ControlFrame::InitAboutDialog
 
   ABGGBA: Nintendo Game Boy Advance emulator using wxWidgets and SDL2
@@ -184,11 +184,11 @@ void ControlFrame::InitAboutDialog() {
 
     /* ----------------------------------------------------------------------------------------
        We'll need the use of a couple of sizers:
-           - The dialog sizer will be the main sizer to vertically place all the sub-sizers
-           - Button sizer will just align the button to the lower right
-           - The top section sizer will hold all the text
-           - The license box sizer is a special sizer for the static box, it will allow us
-             to place a text control inside of it.
+	   - The dialog sizer will be the main sizer to vertically place all the sub-sizers
+	   - Button sizer will just align the button to the lower right
+	   - The top section sizer will hold all the text
+	   - The license box sizer is a special sizer for the static box, it will allow us
+	     to place a text control inside of it.
     ---------------------------------------------------------------------------------------- */
     wxBoxSizer* pwbsizDialogSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* pwbsizButtonSizer = new wxBoxSizer(wxHORIZONTAL);

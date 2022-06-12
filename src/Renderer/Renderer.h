@@ -40,24 +40,24 @@
   Summary:  Class to wrap SDL2 functions into simple function calls
 
   Methods:  Renderer
-              Constructor.
-              Initializes the SDL window and texture to be used
-              as the framebuffer.
-            ~Renderer
-              Destructor.
-              Cleans up the SDL window data structures
-            StartWindowing
-              Sets the window to shown
-            StopWindowing
-              Sets the window to hidden
-            AttachFramebuffer
-              Attaches a pointer to the pixel buffer used by the
-              GBA components
-            Draw
-              Draws the pixel buffer
-            CapFramerate
-              Templated method to allow a fast way to cap the
-              framerate
+	      Constructor.
+	      Initializes the SDL window and texture to be used
+	      as the framebuffer.
+	    ~Renderer
+	      Destructor.
+	      Cleans up the SDL window data structures
+	    StartWindowing
+	      Sets the window to shown
+	    StopWindowing
+	      Sets the window to hidden
+	    AttachFramebuffer
+	      Attaches a pointer to the pixel buffer used by the
+	      GBA components
+	    Draw
+	      Draws the pixel buffer
+	    CapFramerate
+	      Templated method to allow a fast way to cap the
+	      framerate
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 class Renderer {
 public:
