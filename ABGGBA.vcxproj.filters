@@ -43,6 +43,15 @@
     <Filter Include="Source Files\Core\GBA">
       <UniqueIdentifier>{a937b034-0ae2-44a8-ad55-93247d5e9fec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Core\ARM7TDMI">
+      <UniqueIdentifier>{017d5b82-94ca-4fb0-b29d-c3057170f404}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\ARM7TDMI">
+      <UniqueIdentifier>{2675acb4-a4bd-443e-85de-4dc0fd509098}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\ARM7TDMI\ARM_Instructions">
+      <UniqueIdentifier>{044da7b5-f24d-4fca-b5f0-e162a16b5924}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -63,6 +72,15 @@
     <ClCompile Include="src\Core\GBA\GBA.cpp">
       <Filter>Source Files\Core\GBA</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\ARM7TDMI\ARM7TDMI.cpp">
+      <Filter>Source Files\Core\ARM7TDMI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\ARM7TDMI\InstructionDecoding.cpp">
+      <Filter>Source Files\Core\ARM7TDMI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\DataProcessing.cpp">
+      <Filter>Source Files\Core\ARM7TDMI\ARM_Instructions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GUI\ControlFrame.h">
@@ -82,6 +100,12 @@
     </ClInclude>
     <ClInclude Include="src\Core\GBA\GBA.h">
       <Filter>Header Files\Core\GBA</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\ARM7TDMI\ARM7TDMI.h">
+      <Filter>Header Files\Core\ARM7TDMI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\ARM7TDMI\Instruction.h">
+      <Filter>Header Files\Core\ARM7TDMI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

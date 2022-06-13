@@ -151,6 +151,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ABGGBA.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\ARM7TDMI.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\DataProcessing.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\InstructionDecoding.cpp" />
     <ClCompile Include="src\Core\GBA\GBA.cpp" />
     <ClCompile Include="src\Emulator\Emulator.cpp" />
     <ClCompile Include="src\GUI\ControlFrame.cpp" />
@@ -159,6 +162,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ABGGBA.h" />
+    <ClInclude Include="src\Core\ARM7TDMI\ARM7TDMI.h" />
+    <ClInclude Include="src\Core\ARM7TDMI\Instruction.h" />
     <ClInclude Include="src\Core\GBA\GBA.h" />
     <ClInclude Include="src\Emulator\Emulator.h" />
     <ClInclude Include="src\GUI\ControlFrame.h" />
