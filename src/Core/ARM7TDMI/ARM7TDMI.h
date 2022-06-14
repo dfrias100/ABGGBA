@@ -4,6 +4,7 @@
 #include <cstdint>
 #include "Instruction.h"
 
+enum class ConditionField;
 enum class ARM_Operation;
 enum class THUMB_Operation;
 struct ARM_Instruction;
@@ -35,7 +36,7 @@ public:
     }
     /*void Init();
     void Step();*/
-
+private:
     // Anonymous union-structs are very helpful
     // here to access data like this
     union {
@@ -66,8 +67,8 @@ public:
 	uint32_t Register;
     };
 
-    PSR mCPSR;
-    PSR mSPSR;
+    PSR m_CPSR;
+    PSR m_SPSR;
 
     /*-------------------------------------------------------------
        For 6 out of the 7 modes, there are 3 banks that store the
@@ -108,7 +109,7 @@ public:
 	or not.
     ----------------------------------------------------------------*/
     uint32_t m_aInstructionPipe[2];
-private:
+
     // ARM instructions
     void DataProcessing(uint32_t unInstruction);
     void PSR_Transfer(uint32_t unInstruction);
@@ -146,10 +147,25 @@ private:
     // Instruction Decoding
     ARM_Instruction aarmInstructionTable[0x1000];
 
+
     static constexpr inline uint16_t HashArmOpcode(uint32_t unArmOpcode);
 
     template <uint32_t Instruction>
     constexpr ARM_Instruction DecodeARMInstruction();
-};
+    inline bool TestCondition(ConditionField armCondField);
+
+    // Shifts
+    inline uint32_t LSL(uint32_t unOperand, uint32_t unShiftAmount, bool bAffectFlags);
+    inline uint32_t LSR(uint32_t unOperand, uint32_t unShiftAmount, bool bAffectFlags, bool bImmediate);
+    inline uint32_t ASR(uint32_t unOperand, uint32_t unShiftAmount, bool bAffectFlags, bool bImmediate);
+    inline uint32_t ROR(uint32_t unOperand, uint32_t unShiftAmount, bool bAffectFlags, bool bImmediate);
+
+    // ALU Operations
+    inline uint32_t SUB(uint32_t unLeftOperand, uint32_t unRightOperand, bool bAffectFlags);
+    inline uint32_t ADD(uint32_t unLeftOperand, uint32_t unRightOperand, bool bAffectFlags);
+    inline uint32_t ADC(uint32_t unLeftOperand, uint32_t unRightOperand, bool bAffectFlags);
+    inline uint32_t SBC(uint32_t unLeftOperand, uint32_t unRightOperand, bool bAffectFlags);
+    inline uint32_t MSC(uint32_t unExpression, bool bAffectFlags);
+};						    
 
 #endif

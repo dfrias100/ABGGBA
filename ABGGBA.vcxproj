@@ -152,7 +152,11 @@
   <ItemGroup>
     <ClCompile Include="src\ABGGBA.cpp" />
     <ClCompile Include="src\Core\ARM7TDMI\ARM7TDMI.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\Branch.cpp" />
     <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\DataProcessing.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\DataTransfer.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\Misc.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\Multiply.cpp" />
     <ClCompile Include="src\Core\ARM7TDMI\InstructionDecoding.cpp" />
     <ClCompile Include="src\Core\GBA\GBA.cpp" />
     <ClCompile Include="src\Emulator\Emulator.cpp" />
@@ -169,6 +173,10 @@
     <ClInclude Include="src\GUI\ControlFrame.h" />
     <ClInclude Include="src\GUI\wxInclude.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Core\ARM7TDMI\Arithmetic.inl" />
+    <None Include="src\Core\ARM7TDMI\Shifts.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

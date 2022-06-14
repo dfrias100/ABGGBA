@@ -81,6 +81,18 @@
     <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\DataProcessing.cpp">
       <Filter>Source Files\Core\ARM7TDMI\ARM_Instructions</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\Multiply.cpp">
+      <Filter>Source Files\Core\ARM7TDMI\ARM_Instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\DataTransfer.cpp">
+      <Filter>Source Files\Core\ARM7TDMI\ARM_Instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\Branch.cpp">
+      <Filter>Source Files\Core\ARM7TDMI\ARM_Instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\Misc.cpp">
+      <Filter>Source Files\Core\ARM7TDMI\ARM_Instructions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GUI\ControlFrame.h">
@@ -107,5 +119,13 @@
     <ClInclude Include="src\Core\ARM7TDMI\Instruction.h">
       <Filter>Header Files\Core\ARM7TDMI</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Core\ARM7TDMI\Arithmetic.inl">
+      <Filter>Header Files\Core\ARM7TDMI</Filter>
+    </None>
+    <None Include="src\Core\ARM7TDMI\Shifts.inl">
+      <Filter>Header Files\Core\ARM7TDMI</Filter>
+    </None>
   </ItemGroup>
 </Project>

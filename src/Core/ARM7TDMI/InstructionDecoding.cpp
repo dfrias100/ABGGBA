@@ -5,8 +5,6 @@ constexpr inline uint16_t ARM7TDMI::HashArmOpcode(uint32_t unArmOpcode) {
     return ((unArmOpcode & 0x0FF00000) >> 16) | ((unArmOpcode & 0xF0) >> 4);
 }
 
-
-
 template <uint32_t Instruction>
 constexpr ARM_Instruction ARM7TDMI::DecodeARMInstruction() {
     constexpr uint16_t usnArmHash = HashArmOpcode(Instruction);
