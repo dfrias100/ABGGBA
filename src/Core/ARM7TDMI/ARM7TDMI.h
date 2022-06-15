@@ -2,6 +2,7 @@
 #define ARM7TDMI_H
 
 #include <cstdint>
+#include "../Memory/Memory.h"
 #include "../Memory/AccessType.h"
 #include "Instruction.h"
 
@@ -46,6 +47,8 @@ public:
     /*void Init();
     void Step();*/
 private:
+    Memory m_Mmu;
+
     // Anonymous union-structs are very helpful
     // here to access data like this
     union {
