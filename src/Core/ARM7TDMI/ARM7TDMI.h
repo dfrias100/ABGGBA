@@ -32,7 +32,6 @@ enum class CPU_Mode {
 };
 
 enum class ExecutionState {
-    ARM = (1 << 0),
     THUMB = (1 << 1),
     Halted = (1 << 2),
     IRQ = (1 << 3),
