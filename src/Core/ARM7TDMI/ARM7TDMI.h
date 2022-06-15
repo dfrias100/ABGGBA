@@ -2,8 +2,10 @@
 #define ARM7TDMI_H
 
 #include <cstdint>
+#include "../Memory/AccessType.h"
 #include "Instruction.h"
 
+// Forward Declarations
 enum class ConditionField;
 enum class ARM_Operation;
 enum class THUMB_Operation;
@@ -27,6 +29,14 @@ enum class CPU_Mode {
     ABT = 0b1'0111, // 0x17
     UND = 0b1'1011, // 0x1B
     SYS = 0b1'1111  // 0x1F
+};
+
+enum class ExecutionState {
+    ARM = (1 << 0),
+    THUMB = (1 << 1),
+    Halted = (1 << 2),
+    IRQ = (1 << 3),
+    DMA = (1 << 4)
 };
 
 class ARM7TDMI {
@@ -109,6 +119,9 @@ private:
 	or not.
     ----------------------------------------------------------------*/
     uint32_t m_aInstructionPipe[2];
+    AccessType m_CpuAccessType;
+
+    uint8_t m_CpuExecutionState;
 
     // ARM instructions
     void DataProcessing(uint32_t unInstruction);
@@ -166,6 +179,11 @@ private:
     inline uint32_t ADC(uint32_t unLeftOperand, uint32_t unRightOperand, bool bAffectFlags);
     inline uint32_t SBC(uint32_t unLeftOperand, uint32_t unRightOperand, bool bAffectFlags);
     inline uint32_t MSC(uint32_t unExpression, bool bAffectFlags);
+
+    // Utility Functions
+    void FlushPipelineARM();
+    void FlushPipelineTHUMB();
+    void SwitchMode(CPU_Mode armMode);
 };						    
 
 #endif

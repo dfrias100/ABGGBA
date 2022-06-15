@@ -52,6 +52,12 @@
     <Filter Include="Source Files\Core\ARM7TDMI\ARM_Instructions">
       <UniqueIdentifier>{044da7b5-f24d-4fca-b5f0-e162a16b5924}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Core\Memory">
+      <UniqueIdentifier>{2dc3c65c-d9a0-4c07-9654-5c39147dd860}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core\Memory">
+      <UniqueIdentifier>{78c0a826-65e9-4fc1-bbd1-bb154d72ecb7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -93,6 +99,9 @@
     <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\Misc.cpp">
       <Filter>Source Files\Core\ARM7TDMI\ARM_Instructions</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\Memory\Memory.cpp">
+      <Filter>Source Files\Core\Memory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GUI\ControlFrame.h">
@@ -118,6 +127,12 @@
     </ClInclude>
     <ClInclude Include="src\Core\ARM7TDMI\Instruction.h">
       <Filter>Header Files\Core\ARM7TDMI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Memory\Memory.h">
+      <Filter>Header Files\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Memory\AccessType.h">
+      <Filter>Header Files\Core\Memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

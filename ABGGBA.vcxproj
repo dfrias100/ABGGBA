@@ -159,6 +159,7 @@
     <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\Multiply.cpp" />
     <ClCompile Include="src\Core\ARM7TDMI\InstructionDecoding.cpp" />
     <ClCompile Include="src\Core\GBA\GBA.cpp" />
+    <ClCompile Include="src\Core\Memory\Memory.cpp" />
     <ClCompile Include="src\Emulator\Emulator.cpp" />
     <ClCompile Include="src\GUI\ControlFrame.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -169,6 +170,8 @@
     <ClInclude Include="src\Core\ARM7TDMI\ARM7TDMI.h" />
     <ClInclude Include="src\Core\ARM7TDMI\Instruction.h" />
     <ClInclude Include="src\Core\GBA\GBA.h" />
+    <ClInclude Include="src\Core\Memory\AccessType.h" />
+    <ClInclude Include="src\Core\Memory\Memory.h" />
     <ClInclude Include="src\Emulator\Emulator.h" />
     <ClInclude Include="src\GUI\ControlFrame.h" />
     <ClInclude Include="src\GUI\wxInclude.h" />
