@@ -118,9 +118,205 @@ void ARM7TDMI::HalfwordDataTransfer(uint32_t unInstruction) {
 }
 
 void ARM7TDMI::SingleDataTransfer(uint32_t unInstruction) {
+    bool bIsRegister   = (unInstruction & (1 << 25)) != 0;
+    bool bPreIndexing  = (unInstruction & (1 << 24)) != 0;
+    bool bUpOffset     = (unInstruction & (1 << 23)) != 0;
+    bool bByteQuantity = (unInstruction & (1 << 22)) != 0;
+    bool bWriteBack    = (unInstruction & (1 << 21)) != 0;
+    bool bLoad         = (unInstruction & (1 << 20)) != 0;
 
+    uint32_t unRegisterN = (unInstruction & 0xF0000) >> 16;
+    uint32_t unRegisterD = (unInstruction & 0x0F000) >> 12;
+    uint32_t unOffset    =  unInstruction & 0x00FFF;
+
+    uint32_t  unBaseAddress = m_aRegisters[unRegisterN];
+    uint32_t& unSrcOrDest   = m_aRegisters[unRegisterD];
+
+    uint32_t unOffsetVal;
+
+    if (bIsRegister) {
+	// See data processing
+	uint8_t  ubyShiftType = (unOffset & 0b0110'0000) >> 5;
+	uint16_t usnShiftAmount = (unOffset & 0xF80) >> 7;
+	uint32_t unOffsetRegister = m_aRegisters[unOffset & 0xF];
+
+	switch (ubyShiftType) {
+	case 00: unOffsetVal = LSL(unOffsetRegister, usnShiftAmount, false); break;
+	case 01: unOffsetVal = LSR(unOffsetRegister, usnShiftAmount, false, true); break;
+	case 02: unOffsetVal = ASR(unOffsetRegister, usnShiftAmount, false, true); break;
+	case 03: unOffsetVal = ROR(unOffsetRegister, usnShiftAmount, false, true); break;
+	}
+    } else {
+	unOffsetVal = unOffset;
+    }
+
+    if (!bUpOffset)
+	unOffsetVal = ~unOffsetVal + 1;
+
+    if (bPreIndexing)
+	unBaseAddress = unBaseAddress + unOffsetVal;
+
+    if (bLoad) {
+	uint32_t unLoadedData;
+
+	if (bByteQuantity)
+	    unLoadedData = m_Mmu.ReadByte(unBaseAddress, AccessType::NonSequential);
+	else {
+	    unLoadedData = m_Mmu.ReadWord(unBaseAddress, AccessType::NonSequential);
+	    if ((unBaseAddress = (unBaseAddress & 0x3) << 3)) {
+		// Read is misaligned
+		unLoadedData = ROR(unLoadedData, unBaseAddress, false, false);
+	    }
+	}
+
+	unSrcOrDest = unLoadedData;
+
+	// Idle here
+
+	if (unRegisterD == 15)
+	    FlushPipelineARM();
+    } else {
+	uint32_t unDataToWrite = unSrcOrDest + (unRegisterD == 15 ? 4 : 0);
+
+	if (bByteQuantity)
+	    m_Mmu.WriteByte(unBaseAddress, unDataToWrite, AccessType::NonSequential);
+	else {
+	    m_Mmu.WriteWord(unBaseAddress, unDataToWrite, AccessType::NonSequential);
+	}
+    }
+
+    if ((bWriteBack || !bPreIndexing) && (unRegisterD != unRegisterN || !bLoad)) {
+	if (!bPreIndexing)
+	    unBaseAddress = unBaseAddress + unOffsetVal;
+
+	m_aRegisters[unRegisterN] = unBaseAddress;
+    }
 }
 
 void ARM7TDMI::BlockDataTransfer(uint32_t unInstruction) {
+    bool bPreIndexing = (unInstruction & (1 << 24)) != 0;
+    bool bUpOffset    = (unInstruction & (1 << 23)) != 0;
+    bool bPsrForceUsr = (unInstruction & (1 << 22)) != 0;
+    bool bWriteBack   = (unInstruction & (1 << 21)) != 0;
+    bool bLoad        = (unInstruction & (1 << 20)) != 0;
 
+    uint32_t unRegisterN = (unInstruction & 0xF0000) >> 16;
+    uint32_t unBaseAddress = m_aRegisters[unRegisterN];
+    uint32_t unBaseAddressOrig = unBaseAddress;
+
+    uint16_t usnRegisterList = unInstruction & 0xFFFF;
+
+    CPU_Mode armCurrMode;
+    if (bPsrForceUsr) {
+	if (!(usnRegisterList & (1 << 15)) || !bLoad) {
+	    armCurrMode = static_cast<CPU_Mode>(m_CPSR.Mode);
+	    SwitchMode(CPU_Mode::USR);
+	}
+    }
+
+    if (usnRegisterList != 0) {
+	auto lamBitCount = [&]() {
+	    uint32_t unRegListCpy = usnRegisterList;
+	    uint32_t unBitCount = 0;
+	    while (unRegListCpy) {
+		if (unRegListCpy & 0x1)
+		    unBitCount++;
+		unRegListCpy >>= 1;
+	    }
+	    return unBitCount;
+	};
+
+	uint32_t unRegCount = lamBitCount();
+
+	if (!bUpOffset)
+	    unBaseAddress -= unRegCount * 4;
+
+	bool bAltPreIndex = bPreIndexing ^ !bUpOffset;
+
+	AccessType armAccessType = AccessType::NonSequential;
+
+	if (!bLoad && !(usnRegisterList & ((1 << unRegisterN) - 1))) {
+	    if (bAltPreIndex)
+		m_Mmu.WriteWord(unBaseAddress + 4, unBaseAddressOrig, armAccessType);
+	    else
+		m_Mmu.WriteWord(unBaseAddress, unBaseAddressOrig, armAccessType);
+
+	    unBaseAddress += 4;
+	    unBaseAddressOrig += bUpOffset ? 4 : -4;
+
+	    usnRegisterList &= ~(1 << unRegisterN);
+	    unRegCount--;
+	    armAccessType = AccessType::Sequential;
+	}
+
+	if (bWriteBack)
+	    m_aRegisters[unRegisterN] = bUpOffset ? (unBaseAddressOrig + unRegCount * 4) :
+						    (unBaseAddressOrig - unRegCount * 4);
+
+	if (bLoad) {
+	    for (uint32_t i = 0; i < 16; i++) {
+		if (usnRegisterList & (1 << i)) {
+		    if (bAltPreIndex)
+			unBaseAddress += 4;
+
+		    m_aRegisters[i] = m_Mmu.ReadWord(unBaseAddress, armAccessType);
+		    armAccessType = AccessType::Sequential;
+
+		    if (!bAltPreIndex)
+			unBaseAddress += 4;
+		}
+	    }
+	} else {
+	    uint32_t unPcVal = m_PC;
+
+	    m_PC += 4;
+
+	    for (uint32_t i = 0; i < 16; i++) {
+		if (usnRegisterList & (1 << i)) {
+		    if (bAltPreIndex)
+			unBaseAddress += 4;
+
+		    m_Mmu.WriteWord(unBaseAddress, m_aRegisters[i], armAccessType);
+		    armAccessType = AccessType::Sequential;
+
+		    if (!bAltPreIndex)
+			unBaseAddress += 4;
+		}
+	    }
+
+	    m_PC = unPcVal;
+	}
+    } else {
+	// How did we get here?
+	if (bLoad) {
+	    m_PC = m_Mmu.ReadWord(unBaseAddress, AccessType::NonSequential);
+	    FlushPipelineARM();
+	} else {
+	    if (bUpOffset)
+		m_Mmu.WriteWord(unBaseAddress + (bPreIndexing ? 4 : 0), m_PC + 4, AccessType::NonSequential);
+	    else
+		m_Mmu.WriteWord(unBaseAddress - (bPreIndexing ? 0x40 : 0x3C), m_PC + 4, AccessType::NonSequential);
+	}
+	if (bWriteBack)
+	    m_aRegisters[unRegisterN] = bUpOffset ? (unBaseAddress + 0x40) : (unBaseAddress - 0x40);
+    }
+
+    if (bPsrForceUsr) {
+	if (!(usnRegisterList & (1 << 15)) || !bLoad)
+	    // STM or LDM with S bit set, without R15
+	    SwitchMode(armCurrMode);
+	else {
+	    // LDM with R15 with S bit set
+	    m_CPSR = m_SPSR;
+	    if (m_CPSR.T) {
+		m_CpuExecutionState |= static_cast<uint8_t>(ExecutionState::THUMB);
+		FlushPipelineTHUMB();
+	    } else {
+		FlushPipelineARM();
+	    }
+	}
+    } else if ((usnRegisterList & (1 << 15)) && bLoad) {
+	// LDM with R15 but S bit was not set
+	FlushPipelineARM();
+    }
 }

@@ -8,7 +8,7 @@ class Memory {
 public:
     void WriteWord(uint32_t unAddress, uint32_t unData, AccessType armAccessType);
     void WriteHalfWord(uint32_t unAddress, uint16_t unData, AccessType armAccessType);
-    void WriteByte(uint32_t unAddress, uint16_t unData, AccessType armAccessType);
+    void WriteByte(uint32_t unAddress, uint8_t unData, AccessType armAccessType);
 
     uint32_t ReadWord(uint32_t unAddress, AccessType armAccessType);
     uint16_t ReadHalfWord(uint32_t unAddress, AccessType armAccessType);

@@ -40,7 +40,7 @@ void ARM7TDMI::DataProcessing(uint32_t unInstruction) {
 	unOperand2 = m_aRegisters[usnOperand2 & 0xF];
 
 	if (usnShiftControl & 0x1) {
-	    unShiftAmount = m_aRegisters[usnRegisterSelect];
+	    unShiftAmount = m_aRegisters[usnRegisterSelect] & 0xFF;
 
 	    // R15, the PC, is already 8 bytes ahead, if 
 	    // a register is used to specify the shift,
@@ -57,10 +57,10 @@ void ARM7TDMI::DataProcessing(uint32_t unInstruction) {
 	usnShiftControl = (usnShiftControl >> 1) & 3;
 
 	switch (usnShiftControl) {
-	    case 00: LSL(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode); break;
-	    case 01: LSR(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode, !bIdleCycle); break;
-	    case 02: ASR(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode, !bIdleCycle); break;
-	    case 03: ROR(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode, !bIdleCycle); break;
+	    case 00: unOperand2 = LSL(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode); break;
+	    case 01: unOperand2 = LSR(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode, !bIdleCycle); break;
+	    case 02: unOperand2 = ASR(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode, !bIdleCycle); break;
+	    case 03: unOperand2 = ROR(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode, !bIdleCycle); break;
 	}
 
 	// Idle here when needed
