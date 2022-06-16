@@ -92,9 +92,9 @@ void ARM7TDMI::DataProcessing(uint32_t unInstruction) {
     if (usnRegDest == 15) {
 	if (unInstruction & (1 << 20)) {
 	    // Restore CPSR and switch modes
-	    PSR Spsr = m_SPSR;
-	    SwitchMode(static_cast<CPU_Mode>(Spsr.Mode));
-	    m_CPSR = Spsr;
+	    PSR armSpsr = m_SPSR;
+	    SwitchMode(static_cast<CPU_Mode>(armSpsr.Mode));
+	    m_CPSR = armSpsr;
 	}
 
 	if (!bNotWriteBack) {
