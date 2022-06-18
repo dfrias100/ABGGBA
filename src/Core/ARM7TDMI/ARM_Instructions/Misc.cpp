@@ -2,7 +2,7 @@
 #include <iostream>
 #include <iomanip>
 
-void ARM7TDMI::SoftwareInterrupt(uint32_t unInstruction) {
+void ARM7TDMI::SoftwareInterruptARM(uint32_t unInstruction) {
 
 }
 

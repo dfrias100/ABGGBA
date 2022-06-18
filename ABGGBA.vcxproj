@@ -158,6 +158,11 @@
     <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\Misc.cpp" />
     <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\Multiply.cpp" />
     <ClCompile Include="src\Core\ARM7TDMI\InstructionDecoding.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\ArithmeticInstructions.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\Branch.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\LoadStore.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\Misc.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\StackInstructions.cpp" />
     <ClCompile Include="src\Core\GBA\GBA.cpp" />
     <ClCompile Include="src\Core\Memory\Memory.cpp" />
     <ClCompile Include="src\Emulator\Emulator.cpp" />

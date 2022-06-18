@@ -40,7 +40,7 @@ constexpr ARM_Instruction ARM7TDMI::DecodeARMInstruction() {
 
     } else if ((usnArmHash & 0b1111'0000'0000) == 0b1111'0000'0000) {
 
-	return ARM_Instruction(ARM_Operation::SoftwareInterrupt, &ARM7TDMI::SoftwareInterrupt);
+	return ARM_Instruction(ARM_Operation::SoftwareInterrupt, &ARM7TDMI::SoftwareInterruptARM);
 
     } else if ((usnArmHash & 0b1110'0000'0001) == 0b0110'0000'0001) {
 

@@ -41,13 +41,13 @@ enum class ExecutionState {
 
 class ARM7TDMI {
 public:
-    ARM7TDMI() {
-	aarmInstructionTable[0] = ARM7TDMI::DecodeARMInstruction<0b0000'0001'0010'1111'1111'1111'0001'0000>();
-    }
-    /*void Init();
-    void Step();*/
+    /*ARM7TDMI();
+    void Init();*/
+    void Clock();
 private:
     Memory m_Mmu;
+
+    uint32_t unInstruction;
 
     // Anonymous union-structs are very helpful
     // here to access data like this
@@ -136,7 +136,7 @@ private:
     void SingleDataTransfer(uint32_t unInstruction);
     void BlockDataTransfer(uint32_t unInstruction);
     void Branch(uint32_t unInstruction);
-    void SoftwareInterrupt(uint32_t unInstruction);
+    void SoftwareInterruptARM(uint32_t unInstruction);
     void UnimplementedInstruction(uint32_t unInstruction);
     
 
@@ -156,6 +156,8 @@ private:
     void AddOffToSP(uint16_t usnInstruction);
     void PushOrPopRegs(uint16_t usnInstruction);
     void MultipleLoadOrStore(uint16_t usnInstruction);
+    void UnconditionalBranch(uint16_t unInstruction);
+    void SoftwareInterruptTHUMB(uint16_t usnInstruction);
     void ConditionalBranch(uint16_t usnInstruction);
     void LongBranchWithLink(uint16_t usnInstruction);
 

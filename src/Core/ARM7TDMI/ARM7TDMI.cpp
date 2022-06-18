@@ -141,3 +141,18 @@ void ARM7TDMI::SwitchMode(CPU_Mode armMode) {
 
     m_CPSR.Mode = uint32_t(armNewMode);
 }
+
+void ARM7TDMI::Clock() {
+    if (m_CpuExecutionState & static_cast<uint8_t>(ExecutionState::THUMB)) {
+	unInstruction = m_aInstructionPipe[0];
+	m_aInstructionPipe[0] = m_aInstructionPipe[1];
+	m_aInstructionPipe[1] = m_Mmu.ReadHalfWord(m_PC, m_CpuAccessType);
+	// Execute instruction
+    } else {
+	unInstruction = m_aInstructionPipe[0];
+	m_aInstructionPipe[0] = m_aInstructionPipe[1];
+	m_aInstructionPipe[1] = m_Mmu.ReadWord(m_PC, m_CpuAccessType);
+	// Check condition then execute
+    }
+    m_PC += m_CPSR.T ? 2 : 4;
+}

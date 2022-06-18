@@ -137,6 +137,14 @@ void ARM7TDMI::PSR_Transfer(uint32_t unInstruction) {
 		    unValToTransfer |= m_CPSR.Register & 0xFF;
 		} else {
 		    SwitchMode(static_cast<CPU_Mode>(unValToTransfer & 0x1F));
+		    if (unValToTransfer & 0x20) {
+			// The address this instruction occurred at PC - 8, the next
+			// thumb instruction is then at PC - 4, if the CPSR changes then
+			// we need to refill the pipeline and set the PC to the 
+			// next instruction
+			m_PC -= 4;
+			FlushPipelineTHUMB();
+		    }
 		}
 	    }
 	    

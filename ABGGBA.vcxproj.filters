@@ -58,6 +58,9 @@
     <Filter Include="Header Files\Core\Memory">
       <UniqueIdentifier>{78c0a826-65e9-4fc1-bbd1-bb154d72ecb7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Core\ARM7TDMI\THUMB_Instructions">
+      <UniqueIdentifier>{82d99e3d-cc01-48a9-ac5a-3a5fe44f1330}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -101,6 +104,21 @@
     </ClCompile>
     <ClCompile Include="src\Core\Memory\Memory.cpp">
       <Filter>Source Files\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\ArithmeticInstructions.cpp">
+      <Filter>Source Files\Core\ARM7TDMI\THUMB_Instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\LoadStore.cpp">
+      <Filter>Source Files\Core\ARM7TDMI\THUMB_Instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\StackInstructions.cpp">
+      <Filter>Source Files\Core\ARM7TDMI\THUMB_Instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\Branch.cpp">
+      <Filter>Source Files\Core\ARM7TDMI\THUMB_Instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\Misc.cpp">
+      <Filter>Source Files\Core\ARM7TDMI\THUMB_Instructions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
