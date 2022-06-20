@@ -24,3 +24,16 @@
 ==============================================================================+*/
 
 #include "GBA.h"
+
+GBA::GBA() {
+    m_aCpu = new ARM7TDMI();
+}
+
+GBA::~GBA() {
+    delete m_aCpu;
+}
+
+void GBA::RunFor(uint64_t ulCycles) {
+    for (int i = 0; i < ulCycles; i++)
+	m_aCpu->Clock();
+}

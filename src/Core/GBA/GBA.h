@@ -30,15 +30,20 @@
 #include <cstdint>
 #include <vector>
 
+#include "../ARM7TDMI/ARM7TDMI.h"
+
 class GBA {
 public:
+    GBA();
+    ~GBA();
     void RunFor(uint64_t ulCycles);
-    bool LoadRom(std::ifstream& ifsRomFile);
+    //bool LoadRom(std::ifstream& ifsRomFile);
     bool m_bLoadStateFlag = false;
     bool m_bSaveStateFlag = false;
 private:
-    void DumpState();
-    void LoadState(std::vector<uint8_t>& vbyState);
+    ARM7TDMI* m_aCpu;
+    //void DumpState();
+    //void LoadState(std::vector<uint8_t>& vbyState);
 };
 
 #endif

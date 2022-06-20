@@ -1,5 +1,7 @@
 #include "../ARM7TDMI.h"
 #include "../Instruction.h"
+#include <iostream>
+#include <iomanip>
 
 void ARM7TDMI::MoveShiftedRegister(uint16_t usnInstruction) {
     uint16_t usnOpcode    = (usnInstruction & 0b0001'1000'0000'0000) >> 11;
@@ -11,9 +13,9 @@ void ARM7TDMI::MoveShiftedRegister(uint16_t usnInstruction) {
     uint32_t  unSourceRegister = m_aRegisters[usnRegisterS];
 
     switch (usnOpcode) {
-    case 0: unDestinationRegister = LSL(unSourceRegister, usnOffset, true); break;
-    case 1: unDestinationRegister = LSR(unSourceRegister, usnOffset, true, true); break;
-    case 2: unDestinationRegister = ASR(unSourceRegister, usnOffset, true, true); break;
+    case 0: unDestinationRegister = MSC(LSL(unSourceRegister, usnOffset, true), true); break;
+    case 1: unDestinationRegister = MSC(LSR(unSourceRegister, usnOffset, true, true), true); break;
+    case 2: unDestinationRegister = MSC(ASR(unSourceRegister, usnOffset, true, true), true); break;
     }
 }
 
@@ -40,29 +42,33 @@ void ARM7TDMI::HiRegisterOpsOrBranchExchange(uint16_t usnInstruction) {
 	if (unRegisterD == 15)
 	    FlushPipelineTHUMB();
 	break;
-    case 1: // MOV
+    case 1: // CMP
+	SUB(unRegisterDestination, unRegisterSource, true);
+	break;
+    case 2: // MOV
 	unRegisterDestination = unRegisterSource;
 	if (unRegisterD == 15)
 	    FlushPipelineTHUMB();
-	break;
-    case 2: // CMP
-	SUB(unRegisterDestination, unRegisterSource, true);
 	break;
     case 3: // Branch and Exchange
 	m_PC = unRegisterSource;
 	m_CPSR.T = unRegisterSource & 0x1;
 	if (m_CPSR.T) {
+	    m_CpuExecutionState |= static_cast<uint8_t>(ExecutionState::THUMB);
 	    FlushPipelineTHUMB();
 	} else {
 	    m_CpuExecutionState &= ~static_cast<uint8_t>(ExecutionState::THUMB);
 	    FlushPipelineARM();
 	}
 	break;
-    default:
-	break;
     }
 }
 
 void ARM7TDMI::SoftwareInterruptTHUMB(uint16_t usnInstruction) {
 
+}
+
+void ARM7TDMI::UnimplementedInstructionTHUMB(uint16_t usnInstruction) {
+    std::cerr << "WARN: Unknown or undefined instruction " << std::hex << std::setw(8) << unInstruction <<
+	" executed at PC = 0x" << std::hex << std::setw(8) << m_PC - 4 << std::endl;
 }

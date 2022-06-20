@@ -2,7 +2,7 @@ inline uint32_t ARM7TDMI::LSL(uint32_t unOperand, uint32_t unShiftAmount, bool b
     if (unShiftAmount != 0) {
 	uint32_t unCarryOut; 
 	if (unShiftAmount < 32) {
-	    unCarryOut = (unOperand & (1 << (32 - unShiftAmount))) >> unShiftAmount;
+	    unCarryOut = (unOperand & (1 << (32 - unShiftAmount))) >> (32 - unShiftAmount);
 	    unOperand <<= unShiftAmount;
 	} else {
 	    if (unShiftAmount == 32)
@@ -51,7 +51,7 @@ inline uint32_t ARM7TDMI::ASR(uint32_t unOperand, uint32_t unShiftAmount, bool b
 	unCarryOut = (unOperand & (1 << (unShiftAmount - 1))) >> (unShiftAmount - 1);
 	unOperand = ((int32_t)unOperand >> unShiftAmount);
     } else if (bImmediate || unShiftAmount >= 32) {
-	unCarryOut = (unOperand & 0x10000000) >> 31;
+	unCarryOut = (unOperand & 0x80000000) >> 31;
 	unOperand = unCarryOut ? 0xFFFFFFFF : 0x0;
     }
 

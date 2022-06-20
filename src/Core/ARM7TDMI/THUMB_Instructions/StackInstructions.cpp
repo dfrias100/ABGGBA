@@ -23,7 +23,7 @@ void ARM7TDMI::PushOrPopRegs(uint16_t usnInstruction) {
 
     if (bLoad) {
 	for (int i = 0; i < 8; i++) {
-	    if (ubyRegisterList & (i << 1)) {
+	    if (ubyRegisterList & (1 << i)) {
 		m_aRegisters[i] = m_Mmu.ReadWord(m_SP, armAccessType);
 		armAccessType = AccessType::Sequential;
 		m_SP += 4;
@@ -44,9 +44,9 @@ void ARM7TDMI::PushOrPopRegs(uint16_t usnInstruction) {
 	}
 
 	for (int i = 7; i >= 0; i--) {
-	    if (ubyRegisterList & (i << 1)) {
+	    if (ubyRegisterList & (1 << i)) {
 		m_SP -= 4;
-		m_Mmu.WriteWord(m_aRegisters[i], m_SP, armAccessType);
+		m_Mmu.WriteWord(m_SP, m_aRegisters[i], armAccessType);
 		armAccessType = AccessType::Sequential;
 	    }
 	}

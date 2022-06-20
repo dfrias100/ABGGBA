@@ -53,7 +53,7 @@ enum class THUMB_Operation {
     LoadOrStoreWithRegOff,
     LoadOrStoreSignExtendedByteOrHalfWord,
     LoadOrStoreWithImmOff,
-    LoadOrStoreHalfword,
+    LoadOrStoreHalfWord,
     SP_RelLoadOrStore,
     LoadAddress,
     AddOffToSP,
@@ -96,6 +96,9 @@ struct ARM_Instruction {
 struct THUMB_Instruction {
     THUMB_Operation tmbOp;
     THUMB_FunctionPointer tmbInstruction;
+    THUMB_Instruction();
+    THUMB_Instruction(THUMB_Operation _tmbOp, THUMB_FunctionPointer _tmbInstruction) :
+	tmbOp(_tmbOp), tmbInstruction(_tmbInstruction) { };
 };
 
 #endif

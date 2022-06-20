@@ -7,7 +7,7 @@ inline uint32_t ARM7TDMI::SUB(uint32_t unLeftOperand, uint32_t unRightOperand, b
 	else
 	    m_CPSR.C = 0;
 
-	ulResult = 0xFFFF'FFFF;
+	ulResult &= 0xFFFF'FFFF;
 
 	m_CPSR.Z = ulResult == 0;
 	m_CPSR.N = (ulResult & 0x8000'0000) != 0;

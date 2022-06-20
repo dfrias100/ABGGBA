@@ -33,6 +33,7 @@
 
 #include "../Renderer/Renderer.h";
 #include "../GUI/ControlFrame.h"
+#include "../Core/GBA/GBA.h"
 
 class ControlFrame;
 
@@ -88,6 +89,8 @@ private:
     Renderer* m_pRenderer;
     ControlFrame* m_pParentWindow;
     std::chrono::steady_clock::time_point m_timStart;
+
+    GBA* m_aGba;
 
     bool m_bStart = false;
     bool m_bPaused = false;

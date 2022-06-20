@@ -96,10 +96,10 @@
     <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\DataTransfer.cpp">
       <Filter>Source Files\Core\ARM7TDMI\ARM_Instructions</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\Branch.cpp">
+    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\BranchARM.cpp">
       <Filter>Source Files\Core\ARM7TDMI\ARM_Instructions</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\Misc.cpp">
+    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\MiscARM.cpp">
       <Filter>Source Files\Core\ARM7TDMI\ARM_Instructions</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\Memory\Memory.cpp">
@@ -114,10 +114,10 @@
     <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\StackInstructions.cpp">
       <Filter>Source Files\Core\ARM7TDMI\THUMB_Instructions</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\Branch.cpp">
+    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\BranchTHUMB.cpp">
       <Filter>Source Files\Core\ARM7TDMI\THUMB_Instructions</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\Misc.cpp">
+    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\MiscTHUMB.cpp">
       <Filter>Source Files\Core\ARM7TDMI\THUMB_Instructions</Filter>
     </ClCompile>
   </ItemGroup>

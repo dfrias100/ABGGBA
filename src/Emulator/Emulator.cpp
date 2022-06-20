@@ -33,6 +33,8 @@
 Emulator::Emulator(ControlFrame* pParentWindow) {
     m_pRenderer = new Renderer();
     m_pParentWindow = pParentWindow;
+
+    m_aGba = new GBA();
 }
 
 Emulator::~Emulator() {
@@ -116,6 +118,7 @@ void Emulator::DoEmulation() {
 	    PauseUntilNotify();
 	    m_timStart = std::chrono::steady_clock::now();
 	} else {
+	    m_aGba->RunFor(240000);
 	    constexpr int nSize = 240 * 160;
 	    for (int i = 0; i < nSize; i++) {
 		paunDummyPixels[i] = 0;

@@ -2,6 +2,11 @@
 #define ARM7TDMI_H
 
 #include <cstdint>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <string>
 #include "../Memory/Memory.h"
 #include "../Memory/AccessType.h"
 #include "Instruction.h"
@@ -41,8 +46,8 @@ enum class ExecutionState {
 
 class ARM7TDMI {
 public:
-    /*ARM7TDMI();
-    void Init();*/
+    ARM7TDMI();
+    /*void Init();*/
     void Clock();
 private:
     Memory m_Mmu;
@@ -137,7 +142,7 @@ private:
     void BlockDataTransfer(uint32_t unInstruction);
     void Branch(uint32_t unInstruction);
     void SoftwareInterruptARM(uint32_t unInstruction);
-    void UnimplementedInstruction(uint32_t unInstruction);
+    void UnimplementedInstructionARM(uint32_t unInstruction);
     
 
     // THUMB instructions
@@ -160,16 +165,22 @@ private:
     void SoftwareInterruptTHUMB(uint16_t usnInstruction);
     void ConditionalBranch(uint16_t usnInstruction);
     void LongBranchWithLink(uint16_t usnInstruction);
+    void UnimplementedInstructionTHUMB(uint16_t usnInstruction);
 
     // Instruction Decoding
-    ARM_Instruction aarmInstructionTable[0x1000];
-
+    static const ARM_FunctionPointer m_aarmInstructionTable[0x1000];
+    static const THUMB_FunctionPointer m_atmbInstructionTable[0x400];
 
     static constexpr inline uint16_t HashArmOpcode(uint32_t unArmOpcode);
+    static constexpr inline uint16_t HashThumbOpcode(uint16_t unThumbOpcode);
 
     template <uint32_t Instruction>
-    constexpr ARM_Instruction DecodeARMInstruction();
-    inline bool TestCondition(ConditionField armCondField);
+    static constexpr ARM_Instruction DecodeARM_Instruction();
+
+    template <uint16_t Instruction>
+    static constexpr THUMB_Instruction DecodeTHUMB_Instruction();
+
+    bool TestCondition(ConditionField armCondField);
 
     // Shifts
     inline uint32_t LSL(uint32_t unOperand, uint32_t unShiftAmount, bool bAffectFlags);
@@ -189,5 +200,13 @@ private:
     void FlushPipelineTHUMB();
     void SwitchMode(CPU_Mode armMode);
 };						    
+
+constexpr inline uint16_t ARM7TDMI::HashArmOpcode(uint32_t unArmOpcode) {
+    return ((unArmOpcode & 0x0FF00000) >> 16) | ((unArmOpcode & 0xF0) >> 4);
+}
+
+constexpr inline uint16_t ARM7TDMI::HashThumbOpcode(uint16_t unThumbOpcode) {
+    return unThumbOpcode >> 6;
+}
 
 #endif

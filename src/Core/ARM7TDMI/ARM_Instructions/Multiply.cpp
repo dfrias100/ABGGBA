@@ -43,7 +43,7 @@ void ARM7TDMI::Multiply(uint32_t unInstruction) {
 }
 
 void ARM7TDMI::MultiplyLong(uint32_t unInstruction) {
-    bool bUnsigned = (unInstruction & (1 << 22)) != 0;
+    bool bUnsigned = (unInstruction & (1 << 22)) == 0;
     bool bAccumulate = (unInstruction & (1 << 21)) != 0;
     bool bSetConditionCode = (unInstruction & (1 << 20)) != 0;
 
@@ -76,7 +76,7 @@ void ARM7TDMI::MultiplyLong(uint32_t unInstruction) {
     auto lamSignExtend = [](uint32_t unSignedNum) {
 	uint64_t ulReturnVal = unSignedNum;
 	if (ulReturnVal & 0x8000'0000)
-	    unSignedNum |= 0xFFFF'FFFF'0000'0000ULL;
+	    ulReturnVal |= 0xFFFF'FFFF'0000'0000ULL;
 	return ulReturnVal;
     };
 

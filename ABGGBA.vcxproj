@@ -152,16 +152,16 @@
   <ItemGroup>
     <ClCompile Include="src\ABGGBA.cpp" />
     <ClCompile Include="src\Core\ARM7TDMI\ARM7TDMI.cpp" />
-    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\Branch.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\BranchARM.cpp" />
     <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\DataProcessing.cpp" />
     <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\DataTransfer.cpp" />
-    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\Misc.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\MiscARM.cpp" />
     <ClCompile Include="src\Core\ARM7TDMI\ARM_Instructions\Multiply.cpp" />
     <ClCompile Include="src\Core\ARM7TDMI\InstructionDecoding.cpp" />
     <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\ArithmeticInstructions.cpp" />
-    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\Branch.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\BranchTHUMB.cpp" />
     <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\LoadStore.cpp" />
-    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\Misc.cpp" />
+    <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\MiscTHUMB.cpp" />
     <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\StackInstructions.cpp" />
     <ClCompile Include="src\Core\GBA\GBA.cpp" />
     <ClCompile Include="src\Core\Memory\Memory.cpp" />

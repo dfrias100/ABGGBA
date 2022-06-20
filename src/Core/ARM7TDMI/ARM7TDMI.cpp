@@ -1,6 +1,7 @@
 #include "ARM7TDMI.h"
+#include <iomanip>
 
-inline bool ARM7TDMI::TestCondition(ConditionField armCondField) {
+bool ARM7TDMI::TestCondition(ConditionField armCondField) {
     switch (armCondField) {
     case ConditionField::EQ:
 
@@ -66,7 +67,7 @@ inline bool ARM7TDMI::TestCondition(ConditionField armCondField) {
 
 void ARM7TDMI::FlushPipelineARM() {
     // Align address
-    m_PC &= 0b11;
+    m_PC &= ~0b11;
     m_aInstructionPipe[0] = m_Mmu.ReadWord(m_PC, AccessType::NonSequential);
     m_aInstructionPipe[1] = m_Mmu.ReadWord(m_PC + 4, AccessType::Sequential);
     m_CpuAccessType = AccessType::Sequential;
@@ -75,7 +76,7 @@ void ARM7TDMI::FlushPipelineARM() {
 
 void ARM7TDMI::FlushPipelineTHUMB() {
     // Align address
-    m_PC &= 0b1;
+    m_PC &= ~0b1;
     m_aInstructionPipe[0] = m_Mmu.ReadWord(m_PC, AccessType::NonSequential);
     m_aInstructionPipe[1] = m_Mmu.ReadWord(m_PC + 2, AccessType::Sequential);
     m_CpuAccessType = AccessType::Sequential;
@@ -142,17 +143,43 @@ void ARM7TDMI::SwitchMode(CPU_Mode armMode) {
     m_CPSR.Mode = uint32_t(armNewMode);
 }
 
+ARM7TDMI::ARM7TDMI() {
+    std::fill(std::begin(m_aRegisters), std::end(m_aRegisters), 0);
+    m_Mmu.InitTest();
+    m_SP = 0x03007F00;
+    m_LR = 0x00000000;
+    m_PC = 0x08000000;
+    m_SPSR.Register = 0x00000000;
+    m_CPSR.Register = 0x0000001F;
+    FlushPipelineARM();
+
+    m_aRegisterBanks[uint32_t(CPU_BankMode::USRnSYS)][0] = 0x03007F00;
+    m_aRegisterBanks[uint32_t(CPU_BankMode::USRnSYS)][1] = 0x000000C0;
+    m_aRegisterBanks[uint32_t(CPU_BankMode::IRQ)][0] = 0x03007FA0;
+    m_aRegisterBanks[uint32_t(CPU_BankMode::SVC)][0] = 0x03007FE0;
+
+    m_CpuExecutionState = 0;
+
+    m_PC += 4;
+
+    std::ofstream ofsLog("execlog");
+    ofsLog.close();
+}
+
 void ARM7TDMI::Clock() {
     if (m_CpuExecutionState & static_cast<uint8_t>(ExecutionState::THUMB)) {
 	unInstruction = m_aInstructionPipe[0];
 	m_aInstructionPipe[0] = m_aInstructionPipe[1];
 	m_aInstructionPipe[1] = m_Mmu.ReadHalfWord(m_PC, m_CpuAccessType);
 	// Execute instruction
+	std::invoke(m_atmbInstructionTable[HashThumbOpcode(unInstruction)], this, unInstruction);
     } else {
 	unInstruction = m_aInstructionPipe[0];
 	m_aInstructionPipe[0] = m_aInstructionPipe[1];
 	m_aInstructionPipe[1] = m_Mmu.ReadWord(m_PC, m_CpuAccessType);
 	// Check condition then execute
+	if (TestCondition(static_cast<ConditionField>(unInstruction >> 28)))
+	    std::invoke(m_aarmInstructionTable[HashArmOpcode(unInstruction)], this, unInstruction);
     }
     m_PC += m_CPSR.T ? 2 : 4;
 }

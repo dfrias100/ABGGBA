@@ -7,7 +7,7 @@ void ARM7TDMI::DataProcessing(uint32_t unInstruction) {
     uint8_t byOpCode = (unInstruction & 0x01E00000) >> 21;
 
     uint16_t usnRegOperand1 = (unInstruction & 0x000F0000) >> 16;
-    uint16_t usnRegDest = (unInstruction & 0x0000F000) >> 12;
+    uint16_t usnRegDest     = (unInstruction & 0x0000F000) >> 12;
 
     uint16_t usnOperand2 = (unInstruction & 0x00000FFF);
 
@@ -15,7 +15,7 @@ void ARM7TDMI::DataProcessing(uint32_t unInstruction) {
     uint32_t unOperand1 = m_aRegisters[usnRegOperand1];
     uint32_t unOperand2;
 
-    bool bSetAndNotPC = (unInstruction & (1 << 20)) && (usnRegDest != 15);
+    bool bSetAndNotPC = bSetConditionCodes && (usnRegDest != 15);
     bool bIsLogicalOpCode = static_cast<DataProcessingOpCode>(byOpCode) == DataProcessingOpCode::AND ||
 			    static_cast<DataProcessingOpCode>(byOpCode) == DataProcessingOpCode::EOR ||
 			    static_cast<DataProcessingOpCode>(byOpCode) == DataProcessingOpCode::TST ||
@@ -57,10 +57,10 @@ void ARM7TDMI::DataProcessing(uint32_t unInstruction) {
 	usnShiftControl = (usnShiftControl >> 1) & 3;
 
 	switch (usnShiftControl) {
-	    case 00: unOperand2 = LSL(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode); break;
-	    case 01: unOperand2 = LSR(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode, !bIdleCycle); break;
-	    case 02: unOperand2 = ASR(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode, !bIdleCycle); break;
-	    case 03: unOperand2 = ROR(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode, !bIdleCycle); break;
+	    case 0x00: unOperand2 = LSL(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode); break;
+	    case 0x01: unOperand2 = LSR(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode, !bIdleCycle); break;
+	    case 0x02: unOperand2 = ASR(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode, !bIdleCycle); break;
+	    case 0x03: unOperand2 = ROR(unOperand2, unShiftAmount, bSetAndNotPC && bIsLogicalOpCode, !bIdleCycle); break;
 	}
 
 	// Idle here when needed
@@ -90,7 +90,7 @@ void ARM7TDMI::DataProcessing(uint32_t unInstruction) {
     }
 
     if (usnRegDest == 15) {
-	if (unInstruction & (1 << 20)) {
+	if (bSetConditionCodes) {
 	    // Restore CPSR and switch modes
 	    PSR armSpsr = m_SPSR;
 	    SwitchMode(static_cast<CPU_Mode>(armSpsr.Mode));
@@ -104,6 +104,7 @@ void ARM7TDMI::DataProcessing(uint32_t unInstruction) {
 		m_CpuExecutionState |= static_cast<uint8_t>(ExecutionState::THUMB);
 	    } else {
 		// Flush pipelines for ARM sized instructions
+		m_CpuExecutionState &= ~static_cast<uint8_t>(ExecutionState::THUMB);
 		FlushPipelineARM();
 	    }
 	}
@@ -113,7 +114,7 @@ void ARM7TDMI::DataProcessing(uint32_t unInstruction) {
 void ARM7TDMI::PSR_Transfer(uint32_t unInstruction) {
     uint32_t unMrsOrMsr = (unInstruction & (0x3FF << 12)) >> 12;
 
-    bool bIsMrs = (unInstruction & 0b1111110000) == 0b0011110000;
+    bool bIsMrs = (unMrsOrMsr & 0b11'1111'0000) == 0b00'1111'0000;
     bool bCpsrOrSpsr = (unInstruction & (1 << 22)) != 0;
 
     if (bIsMrs) {
@@ -144,6 +145,7 @@ void ARM7TDMI::PSR_Transfer(uint32_t unInstruction) {
 			// next instruction
 			m_PC -= 4;
 			FlushPipelineTHUMB();
+			m_CpuExecutionState |= static_cast<uint8_t>(ExecutionState::THUMB);
 		    }
 		}
 	    }
@@ -163,7 +165,7 @@ void ARM7TDMI::PSR_Transfer(uint32_t unInstruction) {
 	    }
 
 	    unPsrDest &= ~0xF0000000;
-	    unFlagsValue &= 0xF000000;
+	    unFlagsValue &= 0xF0000000;
 
 	    unPsrDest |= unFlagsValue;
 	}

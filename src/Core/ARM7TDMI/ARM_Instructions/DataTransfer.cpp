@@ -3,8 +3,8 @@
 void ARM7TDMI::SingleDataSwap(uint32_t unInstruction) {
     bool bByteQuantity = (unInstruction & (1 << 22));
 
-    uint32_t unRegisterN = (unInstruction & (0xF << 16));
-    uint32_t unRegisterD = (unInstruction & (0xF << 12));
+    uint32_t unRegisterN = (unInstruction & (0xF << 16)) >> 16;
+    uint32_t unRegisterD = (unInstruction & (0xF << 12)) >> 12;
     uint32_t unRegisterM =  unInstruction &  0xF;
 
     uint32_t  unBaseAddress         = m_aRegisters[unRegisterN];
@@ -37,7 +37,7 @@ void ARM7TDMI::HalfwordDataTransfer(uint32_t unInstruction) {
     bool bWriteBack   = (unInstruction & (1 << 21)) != 0;
     bool bLoad        = (unInstruction & (1 << 20)) != 0;
 
-    uint32_t unDataType = (unInstruction & (0b0110 << 4)) >> 4;
+    uint32_t unDataType = (unInstruction & (0b0110 << 4)) >> 5;
 
     uint32_t unRegisterN = (unInstruction & (0xF0000)) >> 16;
     uint32_t unRegisterD = (unInstruction & (0x0F000)) >> 12;
@@ -92,8 +92,8 @@ void ARM7TDMI::HalfwordDataTransfer(uint32_t unInstruction) {
 	    unData = m_Mmu.ReadByte(unBaseAddress, AccessType::NonSequential);
 	}
 
-	if (unDataType & 0x80)
-	    lamSignExtend(unData, unDataType & 0x1);
+	if (unDataType & 0x2)
+	    unData = lamSignExtend(unData, unDataType & 0x1);
 
 	// Idle
 
@@ -130,6 +130,7 @@ void ARM7TDMI::SingleDataTransfer(uint32_t unInstruction) {
     uint32_t unOffset    =  unInstruction & 0x00FFF;
 
     uint32_t  unBaseAddress = m_aRegisters[unRegisterN];
+    uint32_t  unBaseAddrCpy = unBaseAddress;
     uint32_t& unSrcOrDest   = m_aRegisters[unRegisterD];
 
     uint32_t unOffsetVal;
@@ -141,10 +142,10 @@ void ARM7TDMI::SingleDataTransfer(uint32_t unInstruction) {
 	uint32_t unOffsetRegister = m_aRegisters[unOffset & 0xF];
 
 	switch (ubyShiftType) {
-	case 00: unOffsetVal = LSL(unOffsetRegister, usnShiftAmount, false); break;
-	case 01: unOffsetVal = LSR(unOffsetRegister, usnShiftAmount, false, true); break;
-	case 02: unOffsetVal = ASR(unOffsetRegister, usnShiftAmount, false, true); break;
-	case 03: unOffsetVal = ROR(unOffsetRegister, usnShiftAmount, false, true); break;
+	case 0x00: unOffsetVal = LSL(unOffsetRegister, usnShiftAmount, false); break;
+	case 0x01: unOffsetVal = LSR(unOffsetRegister, usnShiftAmount, false, true); break;
+	case 0x02: unOffsetVal = ASR(unOffsetRegister, usnShiftAmount, false, true); break;
+	case 0x03: unOffsetVal = ROR(unOffsetRegister, usnShiftAmount, false, true); break;
 	}
     } else {
 	unOffsetVal = unOffset;
@@ -163,9 +164,9 @@ void ARM7TDMI::SingleDataTransfer(uint32_t unInstruction) {
 	    unLoadedData = m_Mmu.ReadByte(unBaseAddress, AccessType::NonSequential);
 	else {
 	    unLoadedData = m_Mmu.ReadWord(unBaseAddress, AccessType::NonSequential);
-	    if ((unBaseAddress = (unBaseAddress & 0x3) << 3)) {
+	    if ((unBaseAddrCpy = (unBaseAddress & 0x3) << 3)) {
 		// Read is misaligned
-		unLoadedData = ROR(unLoadedData, unBaseAddress, false, false);
+		unLoadedData = ROR(unLoadedData, unBaseAddrCpy, false, false);
 	    }
 	}
 
@@ -235,7 +236,21 @@ void ARM7TDMI::BlockDataTransfer(uint32_t unInstruction) {
 
 	AccessType armAccessType = AccessType::NonSequential;
 
-	if (!bLoad && !(usnRegisterList & ((1 << unRegisterN) - 1))) {
+
+	auto lamCountTrailingZeros = [&]() {
+	    uint32_t unZeroCount = 0;
+	    uint32_t unRegisterListCpy = usnRegisterList;
+	    while (unRegisterListCpy) {
+		if ((unRegisterListCpy & 0x1) == 0)
+		    unZeroCount++;
+		else
+		    break;
+		unRegisterListCpy >>= 1;
+	    }
+	    return unZeroCount;
+	};
+
+	if (!bLoad && (lamCountTrailingZeros() == unRegisterN)) {
 	    if (bAltPreIndex)
 		m_Mmu.WriteWord(unBaseAddress + 4, unBaseAddressOrig, armAccessType);
 	    else
