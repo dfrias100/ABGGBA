@@ -1,5 +1,36 @@
+/*+==============================================================================
+  File:      ARM7TDMI.cpp
+
+  Summary:   Defines the utility methods of the ARM7TDMI class
+
+  Classes:   ARM7TDMI
+
+  Functions: ARM7TDMI::TestCondtion, ARM7TDMI::FlushPipelineARM,
+	     ARM7TDMI::FlushPipelineTHUMB, ARM7TDMI::SwitchMode,
+	     ARM7TDMI::Clock
+
+  ABGGBA: Nintendo Game Boy Advance emulator using wxWidgets and SDL2
+  Copyright(C) 2022  Daniel Frias
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+==============================================================================+*/
+
 #include "ARM7TDMI.h"
-#include <iomanip>
+
+ARM_FunctionPointer ARM7TDMI::m_aarmInstructionTable[0x1000];
+THUMB_FunctionPointer ARM7TDMI::m_atmbInstructionTable[0x400];
 
 bool ARM7TDMI::TestCondition(ConditionField armCondField) {
     switch (armCondField) {
@@ -161,9 +192,6 @@ ARM7TDMI::ARM7TDMI() {
     m_CpuExecutionState = 0;
 
     m_PC += 4;
-
-    std::ofstream ofsLog("execlog");
-    ofsLog.close();
 }
 
 void ARM7TDMI::Clock() {

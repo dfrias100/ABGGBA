@@ -156,7 +156,6 @@ void ControlFrame::OnIdle(wxIdleEvent& evt) {
     while (SDL_PollEvent(&sdlEvent)) {
 	if (sdlEvent.type == SDL_WINDOWEVENT &&
 	    sdlEvent.window.event == SDL_WINDOWEVENT_CLOSE) {
-	    printf("MAIN: closing sdl windows\n");
 	    SendCloseEventToEmulator();
 	}
     }

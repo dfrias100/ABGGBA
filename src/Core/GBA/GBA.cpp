@@ -33,7 +33,7 @@ GBA::~GBA() {
     delete m_aCpu;
 }
 
-void GBA::RunFor(uint64_t ulCycles) {
-    for (int i = 0; i < ulCycles; i++)
+void GBA::RunUntilFrame() {
+    for (int i = 0; i < 200000; i++)
 	m_aCpu->Clock();
 }

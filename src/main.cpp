@@ -23,6 +23,7 @@
 ==============================================================================+*/
 
 #include "GUI/wxInclude.h"
+#include "Core/ARM7TDMI/ARM7TDMI.h"
 #include <SDL.h>
 
 #if defined(WIN32) && defined(_DEBUG)
@@ -32,11 +33,12 @@
 #endif
 
 int main(int argc, char* argv[]) {
-    // TODO: Initialize SDL subsystems
 
 #if defined(WIN32) && defined(_DEBUG)
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
+
+    ARM7TDMI::GenerateInstructionTables();
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_EVENTS) != 0) {
 	// TODO: make this a wx message box

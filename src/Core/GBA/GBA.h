@@ -36,7 +36,7 @@ class GBA {
 public:
     GBA();
     ~GBA();
-    void RunFor(uint64_t ulCycles);
+    void RunUntilFrame();
     //bool LoadRom(std::ifstream& ifsRomFile);
     bool m_bLoadStateFlag = false;
     bool m_bSaveStateFlag = false;

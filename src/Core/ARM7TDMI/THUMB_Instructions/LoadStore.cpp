@@ -1,7 +1,7 @@
 #include "../ARM7TDMI.h"
 #include "../Instruction.h"
 
-void ARM7TDMI::PCRelLoad(uint16_t usnInstruction) {
+void ARM7TDMI::PC_RelLoad(uint16_t usnInstruction) {
     uint16_t usnRegisterD = (usnInstruction & 0b111'0000'0000) >> 8;
     uint32_t unOffset = (usnInstruction & 0xFF) << 2;
 
@@ -122,7 +122,7 @@ void ARM7TDMI::LoadOrStoreWithImmOff(uint16_t usnInstruction) {
     // Idle on loads
 }
 
-void ARM7TDMI::LoadOrStoreHalfword(uint16_t usnInstruction) {
+void ARM7TDMI::LoadOrStoreHalfWord(uint16_t usnInstruction) {
     bool bLoad = (usnInstruction & 0b0000'1000'0000'0000) != 0;
     uint16_t usnOffset    = (usnInstruction & 0b11111'000'000) >> 6;
     uint16_t usnRegisterB = (usnInstruction & 0b00000'111'000) >> 3;
@@ -138,7 +138,7 @@ void ARM7TDMI::LoadOrStoreHalfword(uint16_t usnInstruction) {
     }
 }
 
-void ARM7TDMI::SPRelLoadOrStore(uint16_t usnInstruction) {
+void ARM7TDMI::SP_RelLoadOrStore(uint16_t usnInstruction) {
     bool bLoad = (usnInstruction & 0b0000'1000'0000'0000) != 0;
     uint16_t usnRegisterD = (usnInstruction & 0b111'0000'0000) >> 8;
     uint32_t unOffset = (usnInstruction & 0xFF) << 2;

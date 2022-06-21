@@ -109,7 +109,6 @@ void Emulator::DoEmulation() {
 		sdlEvent.window.event == SDL_WINDOWEVENT_CLOSE) {
 		m_bStart = false;
 		bSdlWindowWantedToClose = true;
-		printf("THREAD: closing sdl windows\n");
 		break;
 	    }
 	}
@@ -118,7 +117,7 @@ void Emulator::DoEmulation() {
 	    PauseUntilNotify();
 	    m_timStart = std::chrono::steady_clock::now();
 	} else {
-	    m_aGba->RunFor(240000);
+	    m_aGba->RunUntilFrame();
 	    constexpr int nSize = 240 * 160;
 	    for (int i = 0; i < nSize; i++) {
 		paunDummyPixels[i] = 0;

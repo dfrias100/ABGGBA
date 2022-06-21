@@ -1,12 +1,36 @@
+/*+==============================================================================
+  File:      ARM7TDMI.h
+
+  Summary:   Defines the ARM7TDMI class and declares its functions
+
+  Classes:   ARM7TDMI
+
+  Functions: ARM7TDMI::HashArmOpcode, ARM7TDMI::HashThumbOpcode
+
+  ABGGBA: Nintendo Game Boy Advance emulator using wxWidgets and SDL2
+  Copyright(C) 2022  Daniel Frias
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+==============================================================================+*/
+
 #ifndef ARM7TDMI_H
 #define ARM7TDMI_H
 
 #include <cstdint>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
-#include <string>
+#include <algorithm>
+#include <functional>
 #include "../Memory/Memory.h"
 #include "../Memory/AccessType.h"
 #include "Instruction.h"
@@ -44,11 +68,20 @@ enum class ExecutionState {
     DMA = (1 << 4)
 };
 
+/*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
+  Class:    ARM7TDMI
+
+  Summary:  Implementation of the ARM7TDMI CPU in the GBA; this is
+	    an interpreter of its instructions
+
+  Methods:  Please refer to the other .cpp files in this directory
+	    and their subdirectories
+C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 class ARM7TDMI {
 public:
     ARM7TDMI();
-    /*void Init();*/
     void Clock();
+    static void GenerateInstructionTables();
 private:
     Memory m_Mmu;
 
@@ -151,12 +184,12 @@ private:
     void MoveCompareAddSubtractImm(uint16_t usnInstruction);
     void ALU(uint16_t usnInstruction);
     void HiRegisterOpsOrBranchExchange(uint16_t usnInstruction);
-    void PCRelLoad(uint16_t usnInstruction);
+    void PC_RelLoad(uint16_t usnInstruction);
     void LoadOrStoreWithRegOff(uint16_t usnInstruction);
     void LoadOrStoreSignExtendedByteOrHalfWord(uint16_t usnInstruction);
     void LoadOrStoreWithImmOff(uint16_t usnInstruction);
-    void LoadOrStoreHalfword(uint16_t usnInstruction);
-    void SPRelLoadOrStore(uint16_t usnInstruction);
+    void LoadOrStoreHalfWord(uint16_t usnInstruction);
+    void SP_RelLoadOrStore(uint16_t usnInstruction);
     void LoadAddress(uint16_t usnInstruction);
     void AddOffToSP(uint16_t usnInstruction);
     void PushOrPopRegs(uint16_t usnInstruction);
@@ -168,8 +201,8 @@ private:
     void UnimplementedInstructionTHUMB(uint16_t usnInstruction);
 
     // Instruction Decoding
-    static const ARM_FunctionPointer m_aarmInstructionTable[0x1000];
-    static const THUMB_FunctionPointer m_atmbInstructionTable[0x400];
+    static ARM_FunctionPointer m_aarmInstructionTable[0x1000];
+    static THUMB_FunctionPointer m_atmbInstructionTable[0x400];
 
     static constexpr inline uint16_t HashArmOpcode(uint32_t unArmOpcode);
     static constexpr inline uint16_t HashThumbOpcode(uint16_t unThumbOpcode);
@@ -179,6 +212,9 @@ private:
 
     template <uint16_t Instruction>
     static constexpr THUMB_Instruction DecodeTHUMB_Instruction();
+
+    static constexpr void GenerateARM_Tables(ARM_FunctionPointer aarmInstructionTable[0x1000]);
+    static constexpr void GenerateTHUMB_Tables(THUMB_FunctionPointer atmbInstructionTable[0x400]);
 
     bool TestCondition(ConditionField armCondField);
 
