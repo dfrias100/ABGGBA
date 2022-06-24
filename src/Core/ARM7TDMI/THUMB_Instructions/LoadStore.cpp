@@ -175,7 +175,7 @@ void ARM7TDMI::MultipleLoadOrStore(uint16_t usnInstruction) {
 
     uint16_t usnRegisterB = (usnInstruction & 0b111'0000'0000) >> 8;
 
-    uint16_t ubyRegisterList = usnInstruction & 0xFF;
+    uint8_t ubyRegisterList = usnInstruction & 0xFF;
     uint32_t unAddress = m_aRegisters[usnRegisterB];
     uint32_t unBaseOrig = unAddress;
 
@@ -243,7 +243,7 @@ void ARM7TDMI::MultipleLoadOrStore(uint16_t usnInstruction) {
 	    FlushPipelineTHUMB();
 	}
 	else {
-	    m_Mmu.WriteWord(unAddress, m_PC, AccessType::NonSequential);
+	    m_Mmu.WriteWord(unAddress, m_PC + 2, AccessType::NonSequential);
 	}
 	unAddress += 0x40;
     }

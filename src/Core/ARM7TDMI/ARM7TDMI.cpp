@@ -136,39 +136,32 @@ void ARM7TDMI::SwitchMode(CPU_Mode armMode) {
     CPU_BankMode armNewMode = lamGetBank(armMode);
     CPU_BankMode armOldMode = lamGetBank(static_cast<CPU_Mode>(m_CPSR.Mode));
 
-    if (armNewMode != CPU_BankMode::FIQ && armOldMode != CPU_BankMode::FIQ) {
-	if (armNewMode != armOldMode) {
-	    // Save the registers
-	    m_aRegisterBanks[uint32_t(armOldMode)][2] = m_SP;
-	    m_aRegisterBanks[uint32_t(armOldMode)][1] = m_LR;
-	    m_aRegisterBanks[uint32_t(armOldMode)][0] = m_SPSR.Register;
+    if (armNewMode != armOldMode) {
+	// Save the registers
+	m_aRegisterBanks[uint32_t(armOldMode)][2] = m_SP;
+	m_aRegisterBanks[uint32_t(armOldMode)][1] = m_LR;
+	m_aRegisterBanks[uint32_t(armOldMode)][0] = m_SPSR.Register;
 
-	    m_SP = m_aRegisterBanks[uint32_t(armNewMode)][2];
-	    m_LR = m_aRegisterBanks[uint32_t(armNewMode)][1];
-	    m_SPSR.Register = m_aRegisterBanks[uint32_t(armNewMode)][0];
+	m_SP = m_aRegisterBanks[uint32_t(armNewMode)][2];
+	m_LR = m_aRegisterBanks[uint32_t(armNewMode)][1];
+	m_SPSR.Register = m_aRegisterBanks[uint32_t(armNewMode)][0];
+
+	if (armNewMode == CPU_BankMode::FIQ || armOldMode == CPU_BankMode::FIQ) {
+	    uint32_t unFiqIdxOld = armOldMode == CPU_BankMode::FIQ;
+	    uint32_t unFiqIdxNew = armNewMode == CPU_BankMode::FIQ;
+
+	    m_aFiqRegisterBanks[unFiqIdxOld][4] = m_aRegisters[8];
+	    m_aFiqRegisterBanks[unFiqIdxOld][3] = m_aRegisters[9];
+	    m_aFiqRegisterBanks[unFiqIdxOld][2] = m_aRegisters[10];
+	    m_aFiqRegisterBanks[unFiqIdxOld][1] = m_aRegisters[11];
+	    m_aFiqRegisterBanks[unFiqIdxOld][0] = m_aRegisters[12];
+
+	    m_aRegisters[8]  = m_aFiqRegisterBanks[unFiqIdxNew][4];
+	    m_aRegisters[9]  = m_aFiqRegisterBanks[unFiqIdxNew][3];
+	    m_aRegisters[10] = m_aFiqRegisterBanks[unFiqIdxNew][2];
+	    m_aRegisters[11] = m_aFiqRegisterBanks[unFiqIdxNew][1];
+	    m_aRegisters[12] = m_aFiqRegisterBanks[unFiqIdxNew][0];
 	}
-    } else {
-	uint32_t unFiqIdxOld = armOldMode == CPU_BankMode::FIQ;
-	uint32_t unFiqIdxNew = armNewMode == CPU_BankMode::FIQ;
-
-	m_aFiqRegisterBanks[unFiqIdxOld][7] = m_aRegisters[8];
-	m_aFiqRegisterBanks[unFiqIdxOld][6] = m_aRegisters[9];
-	m_aFiqRegisterBanks[unFiqIdxOld][5] = m_aRegisters[10];
-	m_aFiqRegisterBanks[unFiqIdxOld][4] = m_aRegisters[11];
-	m_aFiqRegisterBanks[unFiqIdxOld][3] = m_aRegisters[12];
-	m_aFiqRegisterBanks[unFiqIdxOld][2] = m_aRegisters[13];
-	m_aFiqRegisterBanks[unFiqIdxOld][1] = m_aRegisters[14];
-	m_aFiqRegisterBanks[unFiqIdxOld][0] = m_SPSR.Register;
-
-
-	m_aRegisters[8]  = m_aFiqRegisterBanks[unFiqIdxNew][7];
-	m_aRegisters[9]  = m_aFiqRegisterBanks[unFiqIdxNew][6];
-	m_aRegisters[10] = m_aFiqRegisterBanks[unFiqIdxNew][5];
-	m_aRegisters[11] = m_aFiqRegisterBanks[unFiqIdxNew][4];
-	m_aRegisters[12] = m_aFiqRegisterBanks[unFiqIdxNew][3];
-	m_aRegisters[13] = m_aFiqRegisterBanks[unFiqIdxNew][2];
-	m_aRegisters[14] = m_aFiqRegisterBanks[unFiqIdxNew][1];
-	m_SPSR.Register  = m_aFiqRegisterBanks[unFiqIdxNew][0];
     }
 
     m_CPSR.Mode = uint32_t(armNewMode);

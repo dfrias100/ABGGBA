@@ -352,3 +352,7 @@ MigrationBackup/
 
 # Exclude external folder for now
 externals/*
+
+# Exclude ROMs
+*.gba
+*.bin

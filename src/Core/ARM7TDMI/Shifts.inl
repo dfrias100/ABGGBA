@@ -34,7 +34,7 @@ inline uint32_t ARM7TDMI::LSR(uint32_t unOperand, uint32_t unShiftAmount, bool b
     } else if (bImmediate) {
 	// If the shift amount is 0 and an immediate,
 	// this is LSR #32
-	unCarryOut = (unOperand & 0x10000000) >> 31;
+	unCarryOut = (unOperand & 0x80000000) >> 31;
 	unOperand = 0;
     }
 

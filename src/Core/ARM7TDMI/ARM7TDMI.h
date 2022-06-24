@@ -132,7 +132,7 @@ private:
        Minor Index 1: LR_mode
        Minor Index 0: SPSR_mode
     -------------------------------------------------------------*/
-    uint32_t m_aRegisterBanks[5][3];
+    uint32_t m_aRegisterBanks[6][3];
 
     /*----------------------------------------------------------------
 	If we're in FIQ mode, we switched out from a 3-banked mode
@@ -141,12 +141,9 @@ private:
 	Major Index 0: Data from old mode
 	Major Index 1: FIQ registers
 
-	Minor Index 7-3: R8_mode - R12_mode
-	Minor Index 2: SP_mode
-	Minor Index 1: LR_mode
-	Minor Index 0: SPSR_Mode
+	Minor Index 4 - 0: R8_mode - R12_mode
     ----------------------------------------------------------------*/
-    uint32_t m_aFiqRegisterBanks[2][8];
+    uint32_t m_aFiqRegisterBanks[2][5];
 
     /*----------------------------------------------------------------
 	This pipeline contains the next two instructions in memory;

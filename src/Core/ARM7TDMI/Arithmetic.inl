@@ -1,8 +1,9 @@
 inline uint32_t ARM7TDMI::SUB(uint32_t unLeftOperand, uint32_t unRightOperand, bool bAffectFlags) {
-    uint64_t ulResult = (uint64_t)unLeftOperand - unRightOperand;
+    // Special case of ADC: n1 + ~n2 + 1
+    uint64_t ulResult = (uint64_t)unLeftOperand + ~unRightOperand + 1ULL;
 
     if (bAffectFlags) {
-	if (unRightOperand <= unLeftOperand)
+	if (ulResult > 0xFFFF'FFFF)
 	    m_CPSR.C = 1;
 	else
 	    m_CPSR.C = 0;
@@ -11,7 +12,7 @@ inline uint32_t ARM7TDMI::SUB(uint32_t unLeftOperand, uint32_t unRightOperand, b
 
 	m_CPSR.Z = ulResult == 0;
 	m_CPSR.N = (ulResult & 0x8000'0000) != 0;
-	m_CPSR.V = ((unLeftOperand ^ unRightOperand) & (~unRightOperand ^ ulResult) & 0x8000'0000) != 0;
+	m_CPSR.V = ((unLeftOperand ^ ulResult) & (ulResult ^ ~unRightOperand) & 0x8000'0000) != 0;
     }
 
     return ulResult;
@@ -56,7 +57,7 @@ inline uint32_t ARM7TDMI::ADC(uint32_t unLeftOperand, uint32_t unRightOperand, b
 }
 
 inline uint32_t ARM7TDMI::SBC(uint32_t unLeftOperand, uint32_t unRightOperand, bool bAffectFlags) {
-    // Special case of ADC
+    // Special case of ADC: n1 + ~n2 + C
     uint64_t ulResult = (uint64_t)unLeftOperand + ~unRightOperand + m_CPSR.C;
 
     if (bAffectFlags) {

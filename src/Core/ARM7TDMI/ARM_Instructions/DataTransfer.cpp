@@ -353,7 +353,9 @@ void ARM7TDMI::BlockDataTransfer(uint32_t unInstruction) {
 	    SwitchMode(armCurrMode);
 	else {
 	    // LDM with R15 with S bit set
-	    m_CPSR = m_SPSR;
+	    PSR armSpsr = m_SPSR;
+	    SwitchMode(static_cast<CPU_Mode>(armSpsr.Mode));
+	    m_CPSR = armSpsr;
 	    if (m_CPSR.T) {
 		m_CpuExecutionState |= static_cast<uint8_t>(ExecutionState::THUMB);
 		FlushPipelineTHUMB();
