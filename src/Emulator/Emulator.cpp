@@ -39,6 +39,7 @@ Emulator::Emulator(ControlFrame* pParentWindow) {
 
 Emulator::~Emulator() {
     StopEmulation();
+    delete m_aGba;
     delete m_pRenderer;
 }
 

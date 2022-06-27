@@ -26,7 +26,6 @@
 ==============================================================================+*/
 
 #include "ABGGBA.h"
-#include <SDL.h>
 
 bool ABGGBA::OnInit() {
     m_pControlFrame = new ControlFrame("ABGGBA", wxPoint(50, 50), wxSize(300, 300));

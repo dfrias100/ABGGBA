@@ -24,7 +24,7 @@
 
 #include "GUI/wxInclude.h"
 #include "Core/ARM7TDMI/ARM7TDMI.h"
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #if defined(WIN32) && defined(_DEBUG)
     #define _CRTDBG_MAP_ALLOC

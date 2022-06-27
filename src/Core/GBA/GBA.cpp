@@ -25,6 +25,8 @@
 
 #include "GBA.h"
 
+Scheduler GBA::m_SystemScheduler;
+
 GBA::GBA() {
     m_aCpu = new ARM7TDMI();
 }
@@ -34,6 +36,11 @@ GBA::~GBA() {
 }
 
 void GBA::RunUntilFrame() {
-    for (int i = 0; i < 200000; i++)
+    for (int i = 0; i < 100000; i++) {
+	while (GBA::m_SystemScheduler.AreThereEvents()) {
+	    GBA::m_SystemScheduler.DoEvent();
+	}
+
 	m_aCpu->Clock();
+    }
 }

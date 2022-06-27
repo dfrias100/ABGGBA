@@ -32,7 +32,7 @@
 #include <cmath>
 #include <cstdint>
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
   Class:    Renderer

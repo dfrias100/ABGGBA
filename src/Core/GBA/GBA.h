@@ -31,6 +31,7 @@
 #include <vector>
 
 #include "../ARM7TDMI/ARM7TDMI.h"
+#include "../Scheduler/Scheduler.h"
 
 class GBA {
 public:
@@ -40,6 +41,7 @@ public:
     //bool LoadRom(std::ifstream& ifsRomFile);
     bool m_bLoadStateFlag = false;
     bool m_bSaveStateFlag = false;
+    static Scheduler m_SystemScheduler;
 private:
     ARM7TDMI* m_aCpu;
     //void DumpState();

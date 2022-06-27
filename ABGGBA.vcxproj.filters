@@ -61,6 +61,15 @@
     <Filter Include="Source Files\Core\ARM7TDMI\THUMB_Instructions">
       <UniqueIdentifier>{82d99e3d-cc01-48a9-ac5a-3a5fe44f1330}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Core\Scheduler">
+      <UniqueIdentifier>{c7a66f4f-e815-46e9-bec0-c6f101b74732}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Event">
+      <UniqueIdentifier>{26c7d479-6b73-4cc9-aa6a-3bce14da7fed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scheduler">
+      <UniqueIdentifier>{09cc45d1-7774-46f3-92a8-54e18939488d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -120,6 +129,9 @@
     <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\MiscTHUMB.cpp">
       <Filter>Source Files\Core\ARM7TDMI\THUMB_Instructions</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\Scheduler\Scheduler.cpp">
+      <Filter>Source Files\Core\Scheduler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GUI\ControlFrame.h">
@@ -151,6 +163,15 @@
     </ClInclude>
     <ClInclude Include="src\Core\Memory\AccessType.h">
       <Filter>Header Files\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Scheduler\Scheduler.h">
+      <Filter>Header Files\Scheduler</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Event\Event.h">
+      <Filter>Header Files\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Scheduler\RemovablePriorityQueue.h">
+      <Filter>Header Files\Scheduler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
