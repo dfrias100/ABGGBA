@@ -2,7 +2,11 @@
 #define MEMORY_H
 
 #include <cstdint>
+
+#include "../PPU/PPU.h"
 #include "AccessType.h"
+
+class PPU;
 
 class Memory {
 public:
@@ -14,7 +18,10 @@ public:
     uint32_t ReadWord(uint32_t unAddress, AccessType armAccessType);
     uint16_t ReadHalfWord(uint32_t unAddress, AccessType armAccessType);
     uint8_t  ReadByte(uint32_t unAddress, AccessType armAccessType);
+
+    void ConnectPpu(PPU* ppu);
 private:
+    PPU* m_Ppu;
     uint8_t m_aBiosRom[16 * 0x400];
     uint8_t m_aOnBoardWorkRam[256 * 0x400];
     uint8_t m_aOnChipWorkRam[32 * 0x400];

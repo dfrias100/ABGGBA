@@ -28,19 +28,29 @@
 Scheduler GBA::m_SystemScheduler;
 
 GBA::GBA() {
-    m_aCpu = new ARM7TDMI();
+    m_Cpu = new ARM7TDMI();
+    m_Ppu = new PPU();
+
+    m_Cpu->m_Mmu.ConnectPpu(m_Ppu);
 }
 
 GBA::~GBA() {
-    delete m_aCpu;
+    delete m_Cpu;
 }
 
 void GBA::RunUntilFrame() {
-    for (int i = 0; i < 100000; i++) {
+    while(!m_Ppu->bFrameReady) {
 	while (GBA::m_SystemScheduler.AreThereEvents()) {
 	    GBA::m_SystemScheduler.DoEvent();
 	}
 
-	m_aCpu->Clock();
+	m_Cpu->Clock();
+	GBA::m_SystemScheduler.m_ulSystemClock++;
     }
+    m_Ppu->bFrameReady = false;
+}
+
+// There has to be a better way to do this
+uint32_t* GBA::GetGraphicsArrayPointer() {
+    return m_Ppu->GetGraphicsArrayPointer();
 }

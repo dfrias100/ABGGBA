@@ -47,13 +47,13 @@ void Renderer::StopWindowing() {
     SDL_HideWindow(m_pSdlWindow);
 }
 
-void Renderer::AttachFramebuffer(uint32_t*& pGfxArray) {
+void Renderer::AttachFramebuffer(uint32_t* pGfxArray) {
     m_pGfxArray = pGfxArray;
 }
 
 void Renderer::Draw() {
-    SDL_LockTexture(m_pSdlFramebuffer, NULL, (void**) &punPixels, const_cast<int*>(&m_nPITCH));
-    memcpy(punPixels, m_pGfxArray, 240 * 160 * sizeof(uint32_t));
+    SDL_LockTexture(m_pSdlFramebuffer, NULL, (void**) &m_punPixels, const_cast<int*>(&m_nPITCH));
+    memcpy(m_punPixels, m_pGfxArray, 240 * 160 * sizeof(uint32_t));
     SDL_UnlockTexture(m_pSdlFramebuffer);
 
     SDL_RenderClear(m_pSdlRenderer);

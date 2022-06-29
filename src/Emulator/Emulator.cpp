@@ -35,6 +35,7 @@ Emulator::Emulator(ControlFrame* pParentWindow) {
     m_pParentWindow = pParentWindow;
 
     m_aGba = new GBA();
+    m_pRenderer->AttachFramebuffer(m_aGba->GetGraphicsArrayPointer());
 }
 
 Emulator::~Emulator() {
@@ -94,12 +95,7 @@ bool Emulator::IsRunning() {
 
 // This is currently a "dummy" method
 void Emulator::DoEmulation() {
-    uint32_t* paunDummyPixels = new uint32_t[240 * 160];
-    memset(paunDummyPixels, 240 * 160 * sizeof(uint32_t), 0xFF);
     bool bSdlWindowWantedToClose = false;
-    srand(time(0));
-
-    m_pRenderer->AttachFramebuffer(paunDummyPixels);
     SDL_Event sdlEvent;
 
     while (m_bStart) {
@@ -119,15 +115,6 @@ void Emulator::DoEmulation() {
 	    m_timStart = std::chrono::steady_clock::now();
 	} else {
 	    m_aGba->RunUntilFrame();
-	    constexpr int nSize = 240 * 160;
-	    for (int i = 0; i < nSize; i++) {
-		paunDummyPixels[i] = 0;
-		paunDummyPixels[i] |=  rand() & 0xFF;
-		paunDummyPixels[i] |= (rand() & 0xFF) << 8;
-		paunDummyPixels[i] |= (rand() & 0xFF) << 16;
-		paunDummyPixels[i] |=  0xFF000000;
-	    }
-
 	    m_pRenderer->Draw();
 	}
 
@@ -136,8 +123,6 @@ void Emulator::DoEmulation() {
 
     if (bSdlWindowWantedToClose)
 	m_pParentWindow->SendCloseEventToEmulator();
-
-    delete[] paunDummyPixels;
 }
 
 

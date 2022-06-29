@@ -8,6 +8,7 @@
 class Scheduler {
     RemovablePriorityQueue m_qEvents;
     Event m_IdleEvent;
+    Event m_IdleEvent2;
 public:
     Scheduler();
     bool AreThereEvents();

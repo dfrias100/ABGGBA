@@ -31,6 +31,7 @@
 #include <cstdint>
 #include <algorithm>
 #include <functional>
+
 #include "../Memory/Memory.h"
 #include "../Memory/AccessType.h"
 #include "Instruction.h"
@@ -82,9 +83,8 @@ public:
     ARM7TDMI();
     void Clock();
     static void GenerateInstructionTables();
-private:
     Memory m_Mmu;
-
+private:
     uint32_t unInstruction;
 
     // Anonymous union-structs are very helpful

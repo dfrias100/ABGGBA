@@ -67,7 +67,13 @@
     <Filter Include="Header Files\Event">
       <UniqueIdentifier>{26c7d479-6b73-4cc9-aa6a-3bce14da7fed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Scheduler">
+    <Filter Include="Header Files\Core\PPU">
+      <UniqueIdentifier>{ebb18e2f-3c70-437b-a50e-28e9f61953b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\PPU">
+      <UniqueIdentifier>{53a745e5-6f5a-4f36-b016-7636e10d87e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core\Scheduler">
       <UniqueIdentifier>{09cc45d1-7774-46f3-92a8-54e18939488d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -132,6 +138,9 @@
     <ClCompile Include="src\Core\Scheduler\Scheduler.cpp">
       <Filter>Source Files\Core\Scheduler</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\PPU\PPU.cpp">
+      <Filter>Source Files\Core\PPU</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GUI\ControlFrame.h">
@@ -165,13 +174,16 @@
       <Filter>Header Files\Core\Memory</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Scheduler\Scheduler.h">
-      <Filter>Header Files\Scheduler</Filter>
+      <Filter>Header Files\Core\Scheduler</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Event\Event.h">
       <Filter>Header Files\Event</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Scheduler\RemovablePriorityQueue.h">
-      <Filter>Header Files\Scheduler</Filter>
+      <Filter>Header Files\Core\Scheduler</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\PPU\PPU.h">
+      <Filter>Header Files\Core\PPU</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

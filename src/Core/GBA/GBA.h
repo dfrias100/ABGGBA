@@ -31,6 +31,8 @@
 #include <vector>
 
 #include "../ARM7TDMI/ARM7TDMI.h"
+#include "../PPU/PPU.h"
+#include "../Event/Event.h"
 #include "../Scheduler/Scheduler.h"
 
 class GBA {
@@ -42,8 +44,10 @@ public:
     bool m_bLoadStateFlag = false;
     bool m_bSaveStateFlag = false;
     static Scheduler m_SystemScheduler;
+    uint32_t* GetGraphicsArrayPointer();
 private:
-    ARM7TDMI* m_aCpu;
+    ARM7TDMI* m_Cpu;
+    PPU* m_Ppu;
     //void DumpState();
     //void LoadState(std::vector<uint8_t>& vbyState);
 };

@@ -44,12 +44,17 @@ void Memory::WriteWord(uint32_t unAddress, uint32_t unData, AccessType armAccess
 	m_aOnBoardWorkRam[(unAddress + 3) & 0x3FFFF] = (unData >> 24) & 0xFF;
 	break;
     case 0x03:
-	m_aOnChipWorkRam[unAddress & 0x7FFF] = unData & 0xFF;
+	m_aOnChipWorkRam[unAddress & 0x7FFF]       = unData & 0xFF;
 	m_aOnChipWorkRam[(unAddress + 1) & 0x7FFF] = (unData >> 8) & 0xFF;
 	m_aOnChipWorkRam[(unAddress + 2) & 0x7FFF] = (unData >> 16) & 0xFF;
 	m_aOnChipWorkRam[(unAddress + 3) & 0x7FFF] = (unData >> 24) & 0xFF;
 	break;
     // TODO: IO and SRAM
+    case 0x05:
+    case 0x06:
+    case 0x07:
+	m_Ppu->WriteWord(unAddress, unData);
+	break;
     }
 }
 
@@ -68,6 +73,11 @@ void Memory::WriteHalfWord(uint32_t unAddress, uint16_t usnData, AccessType armA
 	m_aOnChipWorkRam[(unAddress + 1) & 0x7FFF] = (usnData >> 8) & 0xFF;
 	break;
 	// TODO: IO and SRAM
+    case 0x05:
+    case 0x06:
+    case 0x07:
+	m_Ppu->WriteHalf(unAddress, usnData);
+	break;
     }
 }
 
@@ -96,6 +106,7 @@ uint32_t Memory::ReadWord(uint32_t unAddress, AccessType armAccessType) {
 	unData |= m_aBiosRom[(unAddress + 2) & 0x3FFF] << 16;
 	unData |= m_aBiosRom[(unAddress + 3) & 0x3FFF] << 24;
 	break;
+
     case 0x02:
 	// Technically cannot read if greater than 0x3FFFF, fix this later
 	unData |= m_aOnBoardWorkRam[unAddress & 0x3FFFF];
@@ -103,6 +114,7 @@ uint32_t Memory::ReadWord(uint32_t unAddress, AccessType armAccessType) {
 	unData |= m_aOnBoardWorkRam[(unAddress + 2) & 0x3FFFF] << 16;
 	unData |= m_aOnBoardWorkRam[(unAddress + 3) & 0x3FFFF] << 24;
 	break;
+
     case 0x03:
 	unData |= m_aOnChipWorkRam[unAddress & 0x7FFF];
 	unData |= m_aOnChipWorkRam[(unAddress + 1) & 0x7FFF] << 8;
@@ -110,6 +122,13 @@ uint32_t Memory::ReadWord(uint32_t unAddress, AccessType armAccessType) {
 	unData |= m_aOnChipWorkRam[(unAddress + 3) & 0x7FFF] << 24;
 	break;
 	// TODO: IO and SRAM
+
+    case 0x05:
+    case 0x06:
+    case 0x07:
+	unData = m_Ppu->ReadWordFromBus(unAddress);
+	break;
+
     case 0x08:
     case 0x09:
     case 0x0A:
@@ -133,16 +152,25 @@ uint16_t Memory::ReadHalfWord(uint32_t unAddress, AccessType armAccessType) {
 	usnData |= m_aBiosRom[unAddress & 0x3FFF];
 	usnData |= m_aBiosRom[(unAddress + 1) & 0x3FFF] << 8;
 	break;
+
     case 0x02:
 	// Technically cannot read if greater than 0x3FFFF, fix this later
 	usnData |= m_aOnBoardWorkRam[unAddress & 0x3FFFF];
 	usnData |= m_aOnBoardWorkRam[(unAddress + 1) & 0x3FFFF] << 8;
 	break;
+
     case 0x03:
 	usnData |= m_aOnChipWorkRam[unAddress & 0x7FFF];
 	usnData |= m_aOnChipWorkRam[(unAddress + 1) & 0x7FFF] << 8;
 	break;
 	// TODO: IO and SRAM
+
+    case 0x05:
+    case 0x06:
+    case 0x07:
+	usnData = m_Ppu->ReadHalfFromBus(unAddress);
+	break;
+
     case 0x08:
     case 0x09:
     case 0x0A:
@@ -171,6 +199,13 @@ uint8_t Memory::ReadByte(uint32_t unAddress, AccessType armAccessType) {
 	ubyData = m_aOnChipWorkRam[unAddress & 0x7FFF];
 	break;
 	// TODO: IO and SRAM
+
+    case 0x05:
+    case 0x06:
+    case 0x07:
+	ubyData = m_Ppu->ReadByteFromBus(unAddress);
+	break;
+
     case 0x08:
     case 0x09:
     case 0x0A:
@@ -181,4 +216,8 @@ uint8_t Memory::ReadByte(uint32_t unAddress, AccessType armAccessType) {
 	break;
     }
     return ubyData;
+}
+
+void Memory::ConnectPpu(PPU* ppu) {
+    m_Ppu = ppu;
 }

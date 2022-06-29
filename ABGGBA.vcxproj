@@ -184,6 +184,7 @@
     <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\StackInstructions.cpp" />
     <ClCompile Include="src\Core\GBA\GBA.cpp" />
     <ClCompile Include="src\Core\Memory\Memory.cpp" />
+    <ClCompile Include="src\Core\PPU\PPU.cpp" />
     <ClCompile Include="src\Core\Scheduler\Scheduler.cpp" />
     <ClCompile Include="src\Emulator\Emulator.cpp" />
     <ClCompile Include="src\GUI\ControlFrame.cpp" />
@@ -198,6 +199,7 @@
     <ClInclude Include="src\Core\GBA\GBA.h" />
     <ClInclude Include="src\Core\Memory\AccessType.h" />
     <ClInclude Include="src\Core\Memory\Memory.h" />
+    <ClInclude Include="src\Core\PPU\PPU.h" />
     <ClInclude Include="src\Core\Scheduler\RemovablePriorityQueue.h" />
     <ClInclude Include="src\Core\Scheduler\Scheduler.h" />
     <ClInclude Include="src\Emulator\Emulator.h" />

@@ -66,7 +66,7 @@ public:
 
     void StartWindowing();
     void StopWindowing();
-    void AttachFramebuffer(uint32_t*& pGfxArray);
+    void AttachFramebuffer(uint32_t* pGfxArray);
     void Draw();
 
     template <int Framerate>
@@ -79,7 +79,7 @@ private:
     SDL_Texture* m_pSdlFramebuffer;
 
     uint32_t* m_pGfxArray;
-    uint32_t* punPixels;
+    uint32_t* m_punPixels;
     const int m_nPITCH = 240 * sizeof(uint32_t);
 };
 

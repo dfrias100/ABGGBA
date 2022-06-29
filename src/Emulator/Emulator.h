@@ -31,7 +31,7 @@
 #include <condition_variable>
 #include <chrono>
 
-#include "../Renderer/Renderer.h";
+#include "../Renderer/Renderer.h"
 #include "../GUI/ControlFrame.h"
 #include "../Core/GBA/GBA.h"
 
