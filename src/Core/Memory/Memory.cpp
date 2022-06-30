@@ -32,53 +32,54 @@ void Memory::InitTest() {
 }
 
 void Memory::WriteWord(uint32_t unAddress, uint32_t unData, AccessType armAccessType) {
-    unAddress &= ~0b11;
+    uint32_t unWordAlignedAddress = unAddress & ~0b11;
+
     switch (unAddress >> 24) {
     case 0x00:
 	// BIOS - Do not write!!
 	break;
     case 0x02:
 	// Technically cannot write if greater than 0x3FFFF, fix this later
-	m_aOnBoardWorkRam[unAddress & 0x3FFFF]       =  unData        & 0xFF;
-	m_aOnBoardWorkRam[(unAddress + 1) & 0x3FFFF] = (unData >>  8) & 0xFF;
-	m_aOnBoardWorkRam[(unAddress + 2) & 0x3FFFF] = (unData >> 16) & 0xFF;
-	m_aOnBoardWorkRam[(unAddress + 3) & 0x3FFFF] = (unData >> 24) & 0xFF;
+	m_aOnBoardWorkRam[unWordAlignedAddress & 0x3FFFF]       =  unData        & 0xFF;
+	m_aOnBoardWorkRam[(unWordAlignedAddress + 1) & 0x3FFFF] = (unData >>  8) & 0xFF;
+	m_aOnBoardWorkRam[(unWordAlignedAddress + 2) & 0x3FFFF] = (unData >> 16) & 0xFF;
+	m_aOnBoardWorkRam[(unWordAlignedAddress + 3) & 0x3FFFF] = (unData >> 24) & 0xFF;
 	break;
     case 0x03:
-	m_aOnChipWorkRam[unAddress & 0x7FFF]       = unData & 0xFF;
-	m_aOnChipWorkRam[(unAddress + 1) & 0x7FFF] = (unData >> 8) & 0xFF;
-	m_aOnChipWorkRam[(unAddress + 2) & 0x7FFF] = (unData >> 16) & 0xFF;
-	m_aOnChipWorkRam[(unAddress + 3) & 0x7FFF] = (unData >> 24) & 0xFF;
+	m_aOnChipWorkRam[unWordAlignedAddress & 0x7FFF]       = unData & 0xFF;
+	m_aOnChipWorkRam[(unWordAlignedAddress + 1) & 0x7FFF] = (unData >> 8) & 0xFF;
+	m_aOnChipWorkRam[(unWordAlignedAddress + 2) & 0x7FFF] = (unData >> 16) & 0xFF;
+	m_aOnChipWorkRam[(unWordAlignedAddress + 3) & 0x7FFF] = (unData >> 24) & 0xFF;
 	break;
     // TODO: IO and SRAM
     case 0x05:
     case 0x06:
     case 0x07:
-	m_Ppu->WriteWord(unAddress, unData);
+	m_Ppu->WriteWord(unWordAlignedAddress, unData);
 	break;
     }
 }
 
 void Memory::WriteHalfWord(uint32_t unAddress, uint16_t usnData, AccessType armAccessType) {
-    unAddress &= ~0b1;
+    uint32_t unHalfWordAlignedAddress = unAddress & ~0b1;
     switch (unAddress >> 24) {
     case 0x00:
 	// BIOS - Do not write!!
 	break;
     case 0x02:
 	// Technically cannot write if greater than 0x3FFFF, fix this later
-	m_aOnBoardWorkRam[unAddress & 0x3FFFF] = usnData & 0xFF;
-	m_aOnBoardWorkRam[(unAddress + 1) & 0x3FFFF] = (usnData >> 8) & 0xFF;
+	m_aOnBoardWorkRam[unHalfWordAlignedAddress & 0x3FFFF] = usnData & 0xFF;
+	m_aOnBoardWorkRam[(unHalfWordAlignedAddress + 1) & 0x3FFFF] = (usnData >> 8) & 0xFF;
 	break;
     case 0x03:
-	m_aOnChipWorkRam[unAddress & 0x7FFF] = usnData & 0xFF;
-	m_aOnChipWorkRam[(unAddress + 1) & 0x7FFF] = (usnData >> 8) & 0xFF;
+	m_aOnChipWorkRam[unHalfWordAlignedAddress & 0x7FFF] = usnData & 0xFF;
+	m_aOnChipWorkRam[(unHalfWordAlignedAddress + 1) & 0x7FFF] = (usnData >> 8) & 0xFF;
 	break;
 	// TODO: IO and SRAM
     case 0x05:
     case 0x06:
     case 0x07:
-	m_Ppu->WriteHalf(unAddress, usnData);
+	m_Ppu->WriteHalf(unHalfWordAlignedAddress, usnData);
 	break;
     }
 }
@@ -100,32 +101,32 @@ void Memory::WriteByte(uint32_t unAddress, uint8_t ubyData, AccessType armAccess
 }
 
 uint32_t Memory::ReadWord(uint32_t unAddress, AccessType armAccessType) {
-    unAddress &= ~0b11;
+    uint32_t unWordAlignedAddress = unAddress & ~0b11;
     uint32_t unData = 0x00;
     switch (unAddress >> 24) {
     case 0x00:
-	unData |= m_aBiosRom[unAddress & 0x3FFF];
-	unData |= m_aBiosRom[(unAddress + 1) & 0x3FFF] << 8;
-	unData |= m_aBiosRom[(unAddress + 2) & 0x3FFF] << 16;
-	unData |= m_aBiosRom[(unAddress + 3) & 0x3FFF] << 24;
+	unData |= m_aBiosRom[unWordAlignedAddress & 0x3FFF];
+	unData |= m_aBiosRom[(unWordAlignedAddress + 1) & 0x3FFF] << 8;
+	unData |= m_aBiosRom[(unWordAlignedAddress + 2) & 0x3FFF] << 16;
+	unData |= m_aBiosRom[(unWordAlignedAddress + 3) & 0x3FFF] << 24;
 	break;
 
     case 0x02:
 	// Technically cannot read if greater than 0x3FFFF, fix this later
-	unData |= m_aOnBoardWorkRam[unAddress & 0x3FFFF];
-	unData |= m_aOnBoardWorkRam[(unAddress + 1) & 0x3FFFF] << 8;
-	unData |= m_aOnBoardWorkRam[(unAddress + 2) & 0x3FFFF] << 16;
-	unData |= m_aOnBoardWorkRam[(unAddress + 3) & 0x3FFFF] << 24;
+	unData |= m_aOnBoardWorkRam[unWordAlignedAddress & 0x3FFFF];
+	unData |= m_aOnBoardWorkRam[(unWordAlignedAddress + 1) & 0x3FFFF] << 8;
+	unData |= m_aOnBoardWorkRam[(unWordAlignedAddress + 2) & 0x3FFFF] << 16;
+	unData |= m_aOnBoardWorkRam[(unWordAlignedAddress + 3) & 0x3FFFF] << 24;
 	break;
 
     case 0x03:
-	unData |= m_aOnChipWorkRam[unAddress & 0x7FFF];
-	unData |= m_aOnChipWorkRam[(unAddress + 1) & 0x7FFF] << 8;
-	unData |= m_aOnChipWorkRam[(unAddress + 2) & 0x7FFF] << 16;
-	unData |= m_aOnChipWorkRam[(unAddress + 3) & 0x7FFF] << 24;
+	unData |= m_aOnChipWorkRam[unWordAlignedAddress & 0x7FFF];
+	unData |= m_aOnChipWorkRam[(unWordAlignedAddress + 1) & 0x7FFF] << 8;
+	unData |= m_aOnChipWorkRam[(unWordAlignedAddress + 2) & 0x7FFF] << 16;
+	unData |= m_aOnChipWorkRam[(unWordAlignedAddress + 3) & 0x7FFF] << 24;
 	break;
+	
 	// TODO: IO and SRAM
-
     case 0x04:
 	unData = ubyStubbedRead;
 	ubyStubbedRead = ~ubyStubbedRead;
@@ -134,7 +135,7 @@ uint32_t Memory::ReadWord(uint32_t unAddress, AccessType armAccessType) {
     case 0x05:
     case 0x06:
     case 0x07:
-	unData = m_Ppu->ReadWordFromBus(unAddress);
+	unData = m_Ppu->ReadWordFromBus(unWordAlignedAddress);
 	break;
 
     case 0x08:
@@ -143,41 +144,41 @@ uint32_t Memory::ReadWord(uint32_t unAddress, AccessType armAccessType) {
     case 0x0B:
     case 0x0C:
     case 0x0D:
-	unData |= m_aGamePakRom[unAddress & 0x01FFFFFF];
-	unData |= m_aGamePakRom[(unAddress + 1) & 0x01FFFFFF] << 8;
-	unData |= m_aGamePakRom[(unAddress + 2) & 0x01FFFFFF] << 16;
-	unData |= m_aGamePakRom[(unAddress + 3) & 0x01FFFFFF] << 24;
+	unData |= m_aGamePakRom[unWordAlignedAddress & 0x01FFFFFF];
+	unData |= m_aGamePakRom[(unWordAlignedAddress + 1) & 0x01FFFFFF] << 8;
+	unData |= m_aGamePakRom[(unWordAlignedAddress + 2) & 0x01FFFFFF] << 16;
+	unData |= m_aGamePakRom[(unWordAlignedAddress + 3) & 0x01FFFFFF] << 24;
 	break;
     }
     return unData;
 }
 
 uint16_t Memory::ReadHalfWord(uint32_t unAddress, AccessType armAccessType) {
-    unAddress &= ~0b1;
+    uint32_t unHalfWordAlignedAddress = unAddress & ~0b1;
     uint16_t usnData = 0x00;
     switch (unAddress >> 24) {
     case 0x00:
 	// BIOS
-	usnData |= m_aBiosRom[unAddress & 0x3FFF];
-	usnData |= m_aBiosRom[(unAddress + 1) & 0x3FFF] << 8;
+	usnData |= m_aBiosRom[unHalfWordAlignedAddress & 0x3FFF];
+	usnData |= m_aBiosRom[(unHalfWordAlignedAddress + 1) & 0x3FFF] << 8;
 	break;
 
     case 0x02:
 	// Technically cannot read if greater than 0x3FFFF, fix this later
-	usnData |= m_aOnBoardWorkRam[unAddress & 0x3FFFF];
-	usnData |= m_aOnBoardWorkRam[(unAddress + 1) & 0x3FFFF] << 8;
+	usnData |= m_aOnBoardWorkRam[unHalfWordAlignedAddress & 0x3FFFF];
+	usnData |= m_aOnBoardWorkRam[(unHalfWordAlignedAddress + 1) & 0x3FFFF] << 8;
 	break;
 
     case 0x03:
-	usnData |= m_aOnChipWorkRam[unAddress & 0x7FFF];
-	usnData |= m_aOnChipWorkRam[(unAddress + 1) & 0x7FFF] << 8;
+	usnData |= m_aOnChipWorkRam[unHalfWordAlignedAddress & 0x7FFF];
+	usnData |= m_aOnChipWorkRam[(unHalfWordAlignedAddress + 1) & 0x7FFF] << 8;
 	break;
 	// TODO: IO and SRAM
 
     case 0x05:
     case 0x06:
     case 0x07:
-	usnData = m_Ppu->ReadHalfFromBus(unAddress);
+	usnData = m_Ppu->ReadHalfFromBus(unHalfWordAlignedAddress);
 	break;
 
     case 0x08:
@@ -186,8 +187,8 @@ uint16_t Memory::ReadHalfWord(uint32_t unAddress, AccessType armAccessType) {
     case 0x0B:
     case 0x0C:
     case 0x0D:
-	usnData |= m_aGamePakRom[unAddress & 0x001FFFFF];
-	usnData |= m_aGamePakRom[(unAddress + 1) & 0x001FFFFF] << 8;
+	usnData |= m_aGamePakRom[unHalfWordAlignedAddress & 0x01FFFFFF];
+	usnData |= m_aGamePakRom[(unHalfWordAlignedAddress + 1) & 0x01FFFFFF] << 8;
 	break;
     }
     return usnData;
@@ -221,7 +222,7 @@ uint8_t Memory::ReadByte(uint32_t unAddress, AccessType armAccessType) {
     case 0x0B:
     case 0x0C:
     case 0x0D:
-	ubyData = m_aGamePakRom[unAddress & 0x001FFFFF];
+	ubyData = m_aGamePakRom[unAddress & 0x01FFFFFF];
 	break;
     }
     return ubyData;
