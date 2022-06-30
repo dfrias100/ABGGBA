@@ -6,34 +6,36 @@ PPU::PPU() {
     std::fill(std::begin(m_aOAM), std::end(m_aOAM), 0x00);
     std::fill(std::begin(m_aPaletteRAM), std::end(m_aPaletteRAM), 0x00);
     std::fill(std::begin(m_aunDisplay), std::end(m_aunDisplay), 0xFF000000);
+}
 
+void PPU::InitEvents() {
     m_evtFakeDraw.m_Callback = [&](uint64_t ulLateCycles) {
 	for (size_t i = 0; i < 240 * 160; i++) {
 	    uint8_t ubyColorIndex = m_aV_RAM[i];
 	    uint32_t unGpuColor = 0x00;
 	    uint16_t unGbaColor = m_aPaletteRAM[ubyColorIndex * 2] | m_aPaletteRAM[ubyColorIndex * 2 + 1] << 8;
 	    // 0b?BBBBBgggggrrrrr
-	    
-	    uint32_t unColorRed   = ((float)   (unGbaColor &  0x1F)               / (31.0f)) * 255;
-	    uint32_t unColorGreen = ((float)  ((unGbaColor & (0x1F <<  5)) >>  5) / (31.0f)) * 255;
-	    uint32_t unColorBlue  = ((float)  ((unGbaColor & (0x1F << 10)) >> 10) / (31.0f)) * 255;
 
-	    unColorRed   = unColorRed   <= 255 ? unColorRed   : 255;
+	    uint32_t unColorRed = ((float)(unGbaColor & 0x1F) / (31.0f)) * 255;
+	    uint32_t unColorGreen = ((float)((unGbaColor & (0x1F << 5)) >> 5) / (31.0f)) * 255;
+	    uint32_t unColorBlue = ((float)((unGbaColor & (0x1F << 10)) >> 10) / (31.0f)) * 255;
+
+	    unColorRed = unColorRed <= 255 ? unColorRed : 255;
 	    unColorGreen = unColorGreen <= 255 ? unColorGreen : 255;
-	    unColorBlue  = unColorBlue  <= 255 ? unColorBlue  : 255;
+	    unColorBlue = unColorBlue <= 255 ? unColorBlue : 255;
 
 	    unGpuColor |= 0xFF000000;
-	    unGpuColor |= unColorRed   << 16;
-	    unGpuColor |= unColorGreen <<  8;
+	    unGpuColor |= unColorRed << 16;
+	    unGpuColor |= unColorGreen << 8;
 	    unGpuColor |= unColorBlue;
 
 	    m_aunDisplay[i] = unGpuColor;
 	}
 	bFrameReady = true;
-	GBA::m_SystemScheduler.ScheduleEvent(m_evtFakeDraw, 100000);
+	m_pScheduler->ScheduleEvent(m_evtFakeDraw, 100000);
     };
 
-    GBA::m_SystemScheduler.ScheduleEvent(m_evtFakeDraw, 100000);
+    m_pScheduler->ScheduleEvent(m_evtFakeDraw, 100000);
 }
 
 uint8_t PPU::ReadByteFromBus(uint32_t unAddress) {
@@ -144,6 +146,10 @@ void PPU::WriteWord(uint32_t unAddress, uint32_t unData) {
 	m_aOAM[(unAddress + 3) & 0x3FF] = (unData >> 24) & 0xFF;
 	break;
     }
+}
+
+void PPU::ConnectScheduler(Scheduler* pScheduler) {
+    m_pScheduler = pScheduler;
 }
 
 uint32_t* PPU::GetGraphicsArrayPointer() {

@@ -83,8 +83,10 @@ public:
     ARM7TDMI();
     void Clock();
     static void GenerateInstructionTables();
+    void ConnectScheduler(Scheduler* pScheduler);
     Memory m_Mmu;
 private:
+    Scheduler* m_pScheduler = nullptr;
     uint32_t unInstruction;
 
     // Anonymous union-structs are very helpful

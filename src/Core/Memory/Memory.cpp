@@ -10,9 +10,9 @@ void Memory::InitTest() {
     std::fill(std::begin(m_aBiosRom), std::end(m_aBiosRom), 0);
     std::fill(std::begin(m_aGamePakRom), std::end(m_aGamePakRom), 0);
 
-    const std::string szTestRomFile = "thumb.gba";
+    const std::string szTestRomFile = "arm.gba";
     const std::string szBiosRomFile = "gba_bios.bin";
-
+    
     std::ifstream ifsTestRomStream(szTestRomFile, std::ios::binary);
     std::ifstream ifsBiosRomStream(szBiosRomFile, std::ios::binary);
 
@@ -230,4 +230,8 @@ uint8_t Memory::ReadByte(uint32_t unAddress, AccessType armAccessType) {
 
 void Memory::ConnectPpu(PPU* ppu) {
     m_Ppu = ppu;
+}
+
+void Memory::ConnectScheduler(Scheduler* pScheduler) {
+    m_pScheduler = pScheduler;
 }

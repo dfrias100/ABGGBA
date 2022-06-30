@@ -96,6 +96,10 @@ bool ARM7TDMI::TestCondition(ConditionField armCondField) {
     };
 }
 
+void ARM7TDMI::ConnectScheduler(Scheduler* pScheduler) {
+    m_pScheduler = pScheduler;
+}
+
 void ARM7TDMI::FlushPipelineARM() {
     // Align address
     m_PC &= ~0b11;

@@ -43,11 +43,12 @@ public:
     //bool LoadRom(std::ifstream& ifsRomFile);
     bool m_bLoadStateFlag = false;
     bool m_bSaveStateFlag = false;
-    static Scheduler m_SystemScheduler;
     uint32_t* GetGraphicsArrayPointer();
 private:
+    Scheduler m_Scheduler;
     ARM7TDMI* m_Cpu;
     PPU* m_Ppu;
+    void ConnectSchedulerToComponents();
     //void DumpState();
     //void LoadState(std::vector<uint8_t>& vbyState);
 };

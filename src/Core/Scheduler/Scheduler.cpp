@@ -1,7 +1,5 @@
 #include "Scheduler.h"
 
-uint64_t Scheduler::m_ulSystemClock = 0;
-
 Scheduler::Scheduler() {
     m_IdleEvent.m_Callback = [&](uint64_t ulLateTicks) {
 	return;

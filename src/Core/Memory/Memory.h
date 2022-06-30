@@ -6,6 +6,8 @@
 #include "../PPU/PPU.h"
 #include "AccessType.h"
 
+#include "../Scheduler/Scheduler.h"
+
 class PPU;
 
 class Memory {
@@ -20,7 +22,9 @@ public:
     uint8_t  ReadByte(uint32_t unAddress, AccessType armAccessType);
 
     void ConnectPpu(PPU* ppu);
+    void ConnectScheduler(Scheduler* pScheduler);
 private:
+    Scheduler* m_pScheduler = nullptr;
     PPU* m_Ppu;
     uint8_t m_aBiosRom[16 * 0x400];
     uint8_t m_aOnBoardWorkRam[256 * 0x400];

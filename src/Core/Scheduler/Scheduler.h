@@ -8,14 +8,13 @@
 class Scheduler {
     RemovablePriorityQueue m_qEvents;
     Event m_IdleEvent;
-    Event m_IdleEvent2;
 public:
     Scheduler();
     bool AreThereEvents();
     void DoEvent();
     void ScheduleEvent(Event& evt, uint64_t ulTriggerTime);
     void RemoveEvent(Event& evt);
-    static uint64_t m_ulSystemClock;
+    uint64_t m_ulSystemClock = 0;
 };
 
 #endif

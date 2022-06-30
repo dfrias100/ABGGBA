@@ -25,13 +25,14 @@
 
 #include "GBA.h"
 
-Scheduler GBA::m_SystemScheduler;
-
 GBA::GBA() {
     m_Cpu = new ARM7TDMI();
     m_Ppu = new PPU();
 
     m_Cpu->m_Mmu.ConnectPpu(m_Ppu);
+    ConnectSchedulerToComponents();
+
+    m_Ppu->InitEvents();
 }
 
 GBA::~GBA() {
@@ -41,12 +42,12 @@ GBA::~GBA() {
 
 void GBA::RunUntilFrame() {
     while(!m_Ppu->bFrameReady) {
-	while (GBA::m_SystemScheduler.AreThereEvents()) {
-	    GBA::m_SystemScheduler.DoEvent();
+	while (m_Scheduler.AreThereEvents()) {
+	    m_Scheduler.DoEvent();
 	}
 
 	m_Cpu->Clock();
-	GBA::m_SystemScheduler.m_ulSystemClock++;
+	m_Scheduler.m_ulSystemClock++;
     }
     m_Ppu->bFrameReady = false;
 }
@@ -54,4 +55,10 @@ void GBA::RunUntilFrame() {
 // There has to be a better way to do this
 uint32_t* GBA::GetGraphicsArrayPointer() {
     return m_Ppu->GetGraphicsArrayPointer();
+}
+
+void GBA::ConnectSchedulerToComponents() {
+    m_Cpu->ConnectScheduler(&m_Scheduler);
+    m_Cpu->m_Mmu.ConnectScheduler(&m_Scheduler);
+    m_Ppu->ConnectScheduler(&m_Scheduler);
 }

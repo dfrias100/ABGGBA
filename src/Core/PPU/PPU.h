@@ -19,9 +19,12 @@ public:
     
     void WriteHalf(uint32_t unAddress, uint16_t usnData);
     void WriteWord(uint32_t unAddress, uint32_t unData);
-    
+    void ConnectScheduler(Scheduler* pScheduler);
+    void InitEvents();
+
     uint32_t* GetGraphicsArrayPointer();
 private:
+    Scheduler* m_pScheduler = nullptr;
     Event m_evtFakeDraw;
     uint8_t m_aV_RAM[96 * 1024];
     uint8_t m_aOAM[1024];
