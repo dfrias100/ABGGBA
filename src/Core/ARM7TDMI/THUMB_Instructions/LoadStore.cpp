@@ -133,8 +133,12 @@ void ARM7TDMI::LoadOrStoreHalfWord(uint16_t usnInstruction) {
 
     if (bLoad) {
 	unDestinationRegister = m_Mmu.ReadHalfWord(unAddress, AccessType::NonSequential);
+	if (unAddress & 0x1) {
+	    // Read is misaligned
+	    unDestinationRegister = ROR(unDestinationRegister, 8, false, false);
+	}
     } else {
-	m_Mmu.WriteWord(unAddress, unDestinationRegister, AccessType::NonSequential);
+	m_Mmu.WriteHalfWord(unAddress, unDestinationRegister, AccessType::NonSequential);
     }
 }
 
@@ -146,9 +150,13 @@ void ARM7TDMI::SP_RelLoadOrStore(uint16_t usnInstruction) {
     uint32_t& unDestinationRegister = m_aRegisters[usnRegisterD];
     uint32_t  unAddress = m_SP + unOffset;
 
-    if (bLoad)
+    if (bLoad) {
 	unDestinationRegister = m_Mmu.ReadWord(unAddress, AccessType::NonSequential);
-    else
+	if ((unAddress = (unAddress & 0x3) << 3)) {
+	    // Read is misaligned
+	    unDestinationRegister = ROR(unDestinationRegister, unAddress, false, false);
+	}
+    } else
 	m_Mmu.WriteWord(unAddress, unDestinationRegister, AccessType::NonSequential);
 
     // Idle cycle if load
@@ -230,7 +238,7 @@ void ARM7TDMI::MultipleLoadOrStore(uint16_t usnInstruction) {
 			else
 			    m_Mmu.WriteWord(unAddress, unBaseOrig + 4 * lamBitCount(), AccessType::NonSequential);
 		    } else {
-			m_Mmu.WriteWord(m_aRegisters[i], unAddress, armAccessType);
+			m_Mmu.WriteWord(unAddress, m_aRegisters[i], armAccessType);
 		    }
 		    armAccessType = AccessType::Sequential;
 		    unAddress += 4;

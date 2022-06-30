@@ -106,8 +106,8 @@ void ARM7TDMI::HalfwordDataTransfer(uint32_t unInstruction) {
 	    return unNum;
 	};
 
-	bool bIsLDRH = unDataType == 0x01;
-	bool bIsLDRSH = unDataType == 0x11;
+	bool bIsLDRH = unDataType == 0b01;
+	bool bIsLDRSH = unDataType == 0b11;
 
 	if (unDataType & 0x1) {
 	    unData = m_Mmu.ReadHalfWord(unBaseAddress, AccessType::NonSequential);

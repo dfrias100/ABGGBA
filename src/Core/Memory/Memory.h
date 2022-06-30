@@ -26,6 +26,8 @@ private:
     uint8_t m_aOnBoardWorkRam[256 * 0x400];
     uint8_t m_aOnChipWorkRam[32 * 0x400];
 
+    uint8_t ubyStubbedRead = 0;
+
     // TEMPORARY
     uint8_t m_aGamePakRom[32 * (0x400 * 0x400)];
 };

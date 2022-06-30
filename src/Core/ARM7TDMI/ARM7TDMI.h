@@ -242,4 +242,7 @@ constexpr inline uint16_t ARM7TDMI::HashThumbOpcode(uint16_t unThumbOpcode) {
     return unThumbOpcode >> 6;
 }
 
+#include "Arithmetic.inl"
+#include "Shifts.inl"
+
 #endif

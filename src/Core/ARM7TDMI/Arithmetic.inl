@@ -61,7 +61,7 @@ inline uint32_t ARM7TDMI::SBC(uint32_t unLeftOperand, uint32_t unRightOperand, b
     uint64_t ulResult = (uint64_t)unLeftOperand + ~unRightOperand + m_CPSR.C;
 
     if (bAffectFlags) {
-	if (ulResult >= 0xFFFF'FFFF)
+	if (ulResult > 0xFFFF'FFFF)
 	    m_CPSR.C = 1;
 	else
 	    m_CPSR.C = 0;

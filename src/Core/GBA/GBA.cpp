@@ -36,6 +36,7 @@ GBA::GBA() {
 
 GBA::~GBA() {
     delete m_Cpu;
+    delete m_Ppu;
 }
 
 void GBA::RunUntilFrame() {

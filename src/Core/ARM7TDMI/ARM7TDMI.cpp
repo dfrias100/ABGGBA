@@ -108,8 +108,8 @@ void ARM7TDMI::FlushPipelineARM() {
 void ARM7TDMI::FlushPipelineTHUMB() {
     // Align address
     m_PC &= ~0b1;
-    m_aInstructionPipe[0] = m_Mmu.ReadWord(m_PC, AccessType::NonSequential);
-    m_aInstructionPipe[1] = m_Mmu.ReadWord(m_PC + 2, AccessType::Sequential);
+    m_aInstructionPipe[0] = m_Mmu.ReadHalfWord(m_PC, AccessType::NonSequential);
+    m_aInstructionPipe[1] = m_Mmu.ReadHalfWord(m_PC + 2, AccessType::Sequential);
     m_CpuAccessType = AccessType::Sequential;
     m_PC += 2;
 }
@@ -131,6 +131,7 @@ void ARM7TDMI::SwitchMode(CPU_Mode armMode) {
 	case CPU_Mode::ABT:
 	    return CPU_BankMode::ABT;
 	}
+	return CPU_BankMode::USRnSYS;
     };
 
     CPU_BankMode armNewMode = lamGetBank(armMode);
@@ -164,7 +165,7 @@ void ARM7TDMI::SwitchMode(CPU_Mode armMode) {
 	}
     }
 
-    m_CPSR.Mode = uint32_t(armNewMode);
+    m_CPSR.Mode = uint32_t(armMode);
 }
 
 ARM7TDMI::ARM7TDMI() {

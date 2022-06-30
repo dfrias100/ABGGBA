@@ -40,7 +40,7 @@ void ARM7TDMI::PushOrPopRegs(uint16_t usnInstruction) {
     } else {
 	if (bAlterPcLr) {
 	    m_SP -= 4;
-	    m_Mmu.WriteWord(m_LR, m_SP, armAccessType);
+	    m_Mmu.WriteWord(m_SP, m_LR, armAccessType);
 	}
 
 	for (int i = 7; i >= 0; i--) {

@@ -20,6 +20,8 @@ void ARM7TDMI::ConditionalBranch(uint16_t usnInstruction) {
 	if (unOffset & 0x00'00'00'80)
 	    unOffset |= 0xFF'FF'FF'00;
 
+	unOffset <<= 1;
+
 	m_PC += unOffset;
 	FlushPipelineTHUMB();
     }

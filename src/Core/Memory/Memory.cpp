@@ -10,7 +10,7 @@ void Memory::InitTest() {
     std::fill(std::begin(m_aBiosRom), std::end(m_aBiosRom), 0);
     std::fill(std::begin(m_aGamePakRom), std::end(m_aGamePakRom), 0);
 
-    const std::string szTestRomFile = "FuzzARM.gba";
+    const std::string szTestRomFile = "thumb.gba";
     const std::string szBiosRomFile = "gba_bios.bin";
 
     std::ifstream ifsTestRomStream(szTestRomFile, std::ios::binary);
@@ -32,6 +32,7 @@ void Memory::InitTest() {
 }
 
 void Memory::WriteWord(uint32_t unAddress, uint32_t unData, AccessType armAccessType) {
+    unAddress &= ~0b11;
     switch (unAddress >> 24) {
     case 0x00:
 	// BIOS - Do not write!!
@@ -59,6 +60,7 @@ void Memory::WriteWord(uint32_t unAddress, uint32_t unData, AccessType armAccess
 }
 
 void Memory::WriteHalfWord(uint32_t unAddress, uint16_t usnData, AccessType armAccessType) {
+    unAddress &= ~0b1;
     switch (unAddress >> 24) {
     case 0x00:
 	// BIOS - Do not write!!
@@ -98,6 +100,7 @@ void Memory::WriteByte(uint32_t unAddress, uint8_t ubyData, AccessType armAccess
 }
 
 uint32_t Memory::ReadWord(uint32_t unAddress, AccessType armAccessType) {
+    unAddress &= ~0b11;
     uint32_t unData = 0x00;
     switch (unAddress >> 24) {
     case 0x00:
@@ -123,6 +126,11 @@ uint32_t Memory::ReadWord(uint32_t unAddress, AccessType armAccessType) {
 	break;
 	// TODO: IO and SRAM
 
+    case 0x04:
+	unData = ubyStubbedRead;
+	ubyStubbedRead = ~ubyStubbedRead;
+	break;
+
     case 0x05:
     case 0x06:
     case 0x07:
@@ -145,6 +153,7 @@ uint32_t Memory::ReadWord(uint32_t unAddress, AccessType armAccessType) {
 }
 
 uint16_t Memory::ReadHalfWord(uint32_t unAddress, AccessType armAccessType) {
+    unAddress &= ~0b1;
     uint16_t usnData = 0x00;
     switch (unAddress >> 24) {
     case 0x00:

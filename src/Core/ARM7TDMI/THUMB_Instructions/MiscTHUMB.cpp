@@ -69,6 +69,6 @@ void ARM7TDMI::SoftwareInterruptTHUMB(uint16_t usnInstruction) {
 }
 
 void ARM7TDMI::UnimplementedInstructionTHUMB(uint16_t usnInstruction) {
-    std::cerr << "WARN: Unknown or undefined instruction " << std::hex << std::setw(8) << unInstruction <<
-	" executed at PC = 0x" << std::hex << std::setw(8) << m_PC - 4 << std::endl;
+    std::cerr << "WARN: Unknown or undefined instruction " << std::hex << std::setw(4) << std::setfill('0') << unInstruction <<
+	" executed at PC = 0x" << std::hex << std::setw(8) << std::setfill('0') << m_PC - 4 << std::endl;
 }
