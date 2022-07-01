@@ -92,8 +92,8 @@ void ARM7TDMI::DataProcessing(uint32_t unInstruction) {
 	}
 
 	// Idle here when needed
-	//if (bIdleCycle)
-	    // TODO: Handle idling
+	if (bIdleCycle)
+	    m_pScheduler->m_ulSystemClock++;
     }
 
     bool bNotWriteBack = false;
@@ -138,67 +138,6 @@ void ARM7TDMI::DataProcessing(uint32_t unInstruction) {
 	}
     }
 }
-
-//void ARM7TDMI::PSR_Transfer(uint32_t unInstruction) {
-//    uint32_t unMrsOrMsr = (unInstruction & (0x3FF << 12)) >> 12;
-//
-//    bool bIsMrs = (unMrsOrMsr & 0b11'1111'0000) == 0b00'1111'0000;
-//    bool bCpsrOrSpsr = (unInstruction & (1 << 22)) != 0;
-//
-//    if (bIsMrs) {
-//	// MRS instruction
-//	uint16_t usnRegisterDestination = unMrsOrMsr & 0xF;
-//	m_aRegisters[usnRegisterDestination] = bCpsrOrSpsr ? m_SPSR.Register : m_CPSR.Register;
-//    } else {
-//	// MSR instruction
-//	bool bMsrWithRegister = (unMrsOrMsr & 0b10000) ? true : false;
-//	uint32_t& unPsrDest = bCpsrOrSpsr ? m_SPSR.Register : m_CPSR.Register;
-//
-//	if (bMsrWithRegister) {
-//	    uint32_t unValToTransfer = m_aRegisters[unInstruction & 0xF];
-//
-//	    unValToTransfer &= 0xF00000FF;
-//	    unValToTransfer |= m_CPSR.Register & 0x0FFFFF00;
-//
-//	    if (!bCpsrOrSpsr) {
-//		if (static_cast<CPU_Mode>(m_CPSR.Mode) == CPU_Mode::USR) {
-//		    unValToTransfer &= ~0xFF;
-//		    unValToTransfer |= m_CPSR.Register & 0xFF;
-//		} else {
-//		    SwitchMode(static_cast<CPU_Mode>(unValToTransfer & 0x1F));
-//		    if (unValToTransfer & 0x20) {
-//			// The address this instruction occurred at PC - 8, the next
-//			// thumb instruction is then at PC - 4, if the CPSR changes then
-//			// we need to refill the pipeline and set the PC to the 
-//			// next instruction
-//			m_PC -= 4;
-//			FlushPipelineTHUMB();
-//			m_CpuExecutionState |= static_cast<uint8_t>(ExecutionState::THUMB);
-//		    }
-//		}
-//	    }
-//	    
-//	    unPsrDest = unValToTransfer;
-//	} else {
-//	    //  MSR flag bits transfer
-//	    bool bFlagsAreImmediate = (unInstruction & (1 << 25)) != 0;
-//	    uint32_t unFlagsValue;
-//
-//	    if (bFlagsAreImmediate) {
-//		uint32_t unImmValue = unInstruction & 0xFF;
-//		uint16_t byRotate = (unInstruction & 0xF00) >> 8;
-//		unFlagsValue = ROR(unImmValue, byRotate * 2, false, false);
-//	    } else {
-//		unFlagsValue = m_aRegisters[unInstruction & 0xF];
-//	    }
-//
-//	    unPsrDest &= ~0xF0000000;
-//	    unFlagsValue &= 0xF0000000;
-//
-//	    unPsrDest |= unFlagsValue;
-//	}
-//    }
-//}
 
 void ARM7TDMI::PSR_Transfer(uint32_t unInstruction) {
     bool bIsMsr = (unInstruction & (1 << 21)) != 0;

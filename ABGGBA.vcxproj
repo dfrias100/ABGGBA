@@ -184,6 +184,7 @@
     <ClCompile Include="src\Core\ARM7TDMI\THUMB_Instructions\StackInstructions.cpp" />
     <ClCompile Include="src\Core\GBA\GBA.cpp" />
     <ClCompile Include="src\Core\Memory\Memory.cpp" />
+    <ClCompile Include="src\Core\Memory\MMIO.cpp" />
     <ClCompile Include="src\Core\PPU\PPU.cpp" />
     <ClCompile Include="src\Core\Scheduler\Scheduler.cpp" />
     <ClCompile Include="src\Emulator\Emulator.cpp" />
@@ -210,6 +211,8 @@
   <ItemGroup>
     <None Include="src\Core\ARM7TDMI\Arithmetic.inl" />
     <None Include="src\Core\ARM7TDMI\Shifts.inl" />
+    <None Include="src\Core\PPU\OAM_Entry.inl" />
+    <None Include="src\Core\PPU\PPU_IO.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

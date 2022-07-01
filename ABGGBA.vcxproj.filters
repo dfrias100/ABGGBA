@@ -141,6 +141,9 @@
     <ClCompile Include="src\Core\PPU\PPU.cpp">
       <Filter>Source Files\Core\PPU</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\Memory\MMIO.cpp">
+      <Filter>Source Files\Core\Memory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GUI\ControlFrame.h">
@@ -192,6 +195,12 @@
     </None>
     <None Include="src\Core\ARM7TDMI\Shifts.inl">
       <Filter>Header Files\Core\ARM7TDMI</Filter>
+    </None>
+    <None Include="src\Core\PPU\OAM_Entry.inl">
+      <Filter>Header Files\Core\PPU</Filter>
+    </None>
+    <None Include="src\Core\PPU\PPU_IO.inl">
+      <Filter>Header Files\Core\PPU</Filter>
     </None>
   </ItemGroup>
 </Project>

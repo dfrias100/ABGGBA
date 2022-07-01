@@ -38,6 +38,5 @@ bool ABGGBA::OnInit() {
 
 int ABGGBA::OnExit() {
     m_pwfcAppConfig->Flush();
-    SDL_Quit();
     return 0;
 }

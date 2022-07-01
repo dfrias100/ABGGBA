@@ -59,6 +59,7 @@ void ARM7TDMI::SingleDataSwap(uint32_t unInstruction) {
     unDestinationRegister = unSourceData;
 
     // Idle
+    m_pScheduler->m_ulSystemClock++;
 }
 
 void ARM7TDMI::HalfwordDataTransfer(uint32_t unInstruction) {
@@ -127,6 +128,7 @@ void ARM7TDMI::HalfwordDataTransfer(uint32_t unInstruction) {
 	    unData = lamSignExtend(unData, unDataType & 0x1);
 
 	// Idle
+	m_pScheduler->m_ulSystemClock++;
 
 	unSrcOrDest = unData;
 
@@ -204,6 +206,7 @@ void ARM7TDMI::SingleDataTransfer(uint32_t unInstruction) {
 	unSrcOrDest = unLoadedData;
 
 	// Idle here
+	m_pScheduler->m_ulSystemClock++;
 
 	if (unRegisterD == 15)
 	    FlushPipelineARM();
@@ -312,6 +315,9 @@ void ARM7TDMI::BlockDataTransfer(uint32_t unInstruction) {
 			unBaseAddress += 4;
 		}
 	    }
+	    
+	    // Idle cycle
+	    m_pScheduler->m_ulSystemClock++;
 	} else {
 	    uint32_t unPcVal = m_PC;
 

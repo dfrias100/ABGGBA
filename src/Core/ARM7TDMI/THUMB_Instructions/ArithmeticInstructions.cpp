@@ -93,15 +93,17 @@ void ARM7TDMI::ALU(uint16_t usnInstruction) {
 	return ulResult;
     };
 
+    bool bShift = false;
+
     switch (static_cast<ALU_OpCode>(usnOpcode)) {
     case ALU_OpCode::AND: unDestinationRegister = MSC(unDestinationRegister & unSourceRegister, true); break;
     case ALU_OpCode::EOR: unDestinationRegister = MSC(unDestinationRegister ^ unSourceRegister, true); break;
-    case ALU_OpCode::LSL: unDestinationRegister = MSC(LSL(unDestinationRegister, unSourceRegister, true), true); break;
-    case ALU_OpCode::LSR: unDestinationRegister = MSC(LSR(unDestinationRegister, unSourceRegister, true, false), true); break;
-    case ALU_OpCode::ASR: unDestinationRegister = MSC(ASR(unDestinationRegister, unSourceRegister, true, false), true); break;
+    case ALU_OpCode::LSL: unDestinationRegister = MSC(LSL(unDestinationRegister, unSourceRegister, true), true); bShift = true; break;
+    case ALU_OpCode::LSR: unDestinationRegister = MSC(LSR(unDestinationRegister, unSourceRegister, true, false), true); bShift = true; break;
+    case ALU_OpCode::ASR: unDestinationRegister = MSC(ASR(unDestinationRegister, unSourceRegister, true, false), true); bShift = true; break;
     case ALU_OpCode::ADC: unDestinationRegister = ADC(unDestinationRegister, unSourceRegister, true); break;
     case ALU_OpCode::SBC: unDestinationRegister = SBC(unDestinationRegister, unSourceRegister, true); break;
-    case ALU_OpCode::ROR: unDestinationRegister = MSC(ROR(unDestinationRegister, unSourceRegister, true, false), true); break;
+    case ALU_OpCode::ROR: unDestinationRegister = MSC(ROR(unDestinationRegister, unSourceRegister, true, false), true); bShift = true; break;
     case ALU_OpCode::TST:                         MSC(unDestinationRegister & unSourceRegister, true); break;
     case ALU_OpCode::NEG: unDestinationRegister = SUB(0, unSourceRegister, true); break;
     case ALU_OpCode::CMP:                         SUB(unDestinationRegister, unSourceRegister, true); break;
@@ -113,4 +115,9 @@ void ARM7TDMI::ALU(uint16_t usnInstruction) {
     }
 
     // Idle if multiply
+    m_pScheduler->m_ulSystemClock += nM;
+
+    // Idle if shift
+    if (bShift)
+	m_pScheduler->m_ulSystemClock++;
 }

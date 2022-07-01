@@ -31,6 +31,7 @@ void ARM7TDMI::PushOrPopRegs(uint16_t usnInstruction) {
 	}
 
 	// Idle
+	m_pScheduler->m_ulSystemClock++;
 
 	if (bAlterPcLr) {
 	    m_PC = m_Mmu.ReadWord(m_SP, armAccessType);

@@ -46,5 +46,10 @@ int main(int argc, char* argv[]) {
 	return 1;
     }
 
+    if (atexit(SDL_Quit) != 0) {
+	std::cerr << "Failed to register SDL quit as exit handler!" << std::endl;
+	return 1;
+    }
+
     return wxEntry(argc, argv);
 }

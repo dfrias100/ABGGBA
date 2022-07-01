@@ -45,6 +45,7 @@ void ARM7TDMI::Multiply(uint32_t unInstruction) {
     if (bAccumulate) {
 	ulResult += m_aRegisters[unRegisterN];
 	// Idle
+	m_pScheduler->m_ulSystemClock++;
     }
     
     // Set condition codes
@@ -67,6 +68,7 @@ void ARM7TDMI::Multiply(uint32_t unInstruction) {
     }
 
     // Idle here
+    m_pScheduler->m_ulSystemClock += nM;
 }
 
 void ARM7TDMI::MultiplyLong(uint32_t unInstruction) {
@@ -121,6 +123,7 @@ void ARM7TDMI::MultiplyLong(uint32_t unInstruction) {
     if (bAccumulate) {
 	ulDestinationHiLo += ulAccumulateAmount;
 	// Idle
+	m_pScheduler->m_ulSystemClock++;
     }
 
     if (bSetConditionCode) {
@@ -129,8 +132,10 @@ void ARM7TDMI::MultiplyLong(uint32_t unInstruction) {
     }
 
     // Idle again
+    m_pScheduler->m_ulSystemClock++;
 
     // Idle again for M cycles
+    m_pScheduler->m_ulSystemClock += nM;
 
     m_aRegisters[unRegisterHi] = ulDestinationHiLo >> 32ULL;
     m_aRegisters[unRegisterLo] = ulDestinationHiLo & 0xFFFF'FFFF;

@@ -32,10 +32,55 @@ void PPU::InitEvents() {
 	    m_aunDisplay[i] = unGpuColor;
 	}
 	bFrameReady = true;
-	m_pScheduler->ScheduleEvent(m_evtFakeDraw, 100000);
+	m_pScheduler->ScheduleEvent(m_evtFakeDraw, 197120 - ulLateCycles);
     };
 
-    m_pScheduler->ScheduleEvent(m_evtFakeDraw, 100000);
+    m_pScheduler->ScheduleEvent(m_evtFakeDraw, 197120);
+}
+
+void PPU::WriteByteToRegister(PPU::IoRegister ppuReg, uint8_t ubyData, uint32_t unByteIndex) {
+    unByteIndex <<= 3;
+    switch (ppuReg) {
+    case PPU::IoRegister::IO_DISPCNT:
+	{
+	    m_ppuDispcnt.usnDispcntPacked &=  ~(0xFF << unByteIndex);
+	    m_ppuDispcnt.usnDispcntPacked |= ubyData << unByteIndex;
+	}
+	break;
+    case PPU::IoRegister::IO_DISPSTAT:
+	{
+	    uint8_t ubyReadOnlyRegs = m_ppuDispstat.usnDispstatPacked & 0b111;
+	    m_ppuDispstat.usnDispstatPacked &=  ~(0xFF << unByteIndex);
+	    m_ppuDispstat.usnDispstatPacked |= ubyData << unByteIndex;
+
+	    m_ppuDispstat.usnDispstatPacked &= ~0b111;
+	    m_ppuDispstat.usnDispstatPacked |= ubyReadOnlyRegs;
+	}
+	break;
+    }
+}
+
+uint8_t PPU::ReadByteFromRegister(PPU::IoRegister ppuReg, uint32_t unByteIndex) {
+    uint32_t unData = 0x00;
+    unByteIndex <<= 3;
+    switch (ppuReg) {
+    case PPU::IoRegister::IO_DISPCNT:
+	{
+	    unData = (m_ppuDispcnt.usnDispcntPacked & (0xFF << unByteIndex)) >> unByteIndex;
+	}
+	break;
+    case PPU::IoRegister::IO_DISPSTAT:
+	{
+	    unData = (m_ppuDispstat.usnDispstatPacked & (0xFF << unByteIndex)) >> unByteIndex;
+	}
+	break;
+    case PPU::IoRegister::IO_VCOUNT:
+	{
+	    unData = (m_ppuVcount.usnVcountPacked & (0xFF << unByteIndex)) >> unByteIndex;
+	}
+	break;
+    }
+    return unData;
 }
 
 uint8_t PPU::ReadByteFromBus(uint32_t unAddress) {
@@ -43,14 +88,17 @@ uint8_t PPU::ReadByteFromBus(uint32_t unAddress) {
     switch (unAddress >> 24) {
     case 0x05:
 	ubyData = m_aPaletteRAM[unAddress & 0x3FF];
+	m_pScheduler->m_ulSystemClock++;
 	break;
 
     case 0x06:
 	ubyData = m_aV_RAM[unAddress & 0x17FFF];
+	m_pScheduler->m_ulSystemClock++;
 	break;
 
     case 0x07:
 	ubyData = m_aOAM[unAddress & 0x3FF];
+	m_pScheduler->m_ulSystemClock++;
 	break;
     }
     return ubyData;
@@ -62,16 +110,19 @@ uint16_t PPU::ReadHalfFromBus(uint32_t unAddress) {
     case 0x05:
 	usnData |= m_aPaletteRAM[unAddress & 0x3FF];
 	usnData |= m_aPaletteRAM[(unAddress + 1) & 0x3FF] << 8;
+	m_pScheduler->m_ulSystemClock++;
 	break;
 
     case 0x06:
 	usnData |= m_aV_RAM[unAddress & 0x17FFF];
 	usnData |= m_aV_RAM[(unAddress + 1) & 0x17FFF] << 8;
+	m_pScheduler->m_ulSystemClock++;
 	break;
 
     case 0x07:
 	usnData |= m_aOAM[unAddress & 0x3FF];
 	usnData |= m_aOAM[(unAddress + 1) & 0x3FF] << 8;
+	m_pScheduler->m_ulSystemClock++;
 	break;
     }
     return usnData;
@@ -85,6 +136,7 @@ uint32_t PPU::ReadWordFromBus(uint32_t unAddress) {
 	unData |= m_aPaletteRAM[(unAddress + 1) & 0x3FF] << 8;
 	unData |= m_aPaletteRAM[(unAddress + 2) & 0x3FF] << 16;
 	unData |= m_aPaletteRAM[(unAddress + 3) & 0x3FF] << 24;
+	m_pScheduler->m_ulSystemClock += 2;
 	break;
 
     case 0x06:
@@ -92,6 +144,7 @@ uint32_t PPU::ReadWordFromBus(uint32_t unAddress) {
 	unData |= m_aV_RAM[(unAddress + 1) & 0x17FFF] << 8;
 	unData |= m_aV_RAM[(unAddress + 2) & 0x17FFF] << 16;
 	unData |= m_aV_RAM[(unAddress + 3) & 0x17FFF] << 24;
+	m_pScheduler->m_ulSystemClock += 2;
 	break;
 
     case 0x07:
@@ -99,6 +152,7 @@ uint32_t PPU::ReadWordFromBus(uint32_t unAddress) {
 	unData |= m_aOAM[(unAddress + 1) & 0x3FF] << 8;
 	unData |= m_aOAM[(unAddress + 2) & 0x3FF] << 16;
 	unData |= m_aOAM[(unAddress + 3) & 0x3FF] << 24;
+	m_pScheduler->m_ulSystemClock++;
 	break;
     }
     return unData;
@@ -109,16 +163,19 @@ void PPU::WriteHalf(uint32_t unAddress, uint16_t usnData) {
     case 0x05:
 	m_aPaletteRAM[unAddress & 0x3FF] = usnData & 0xFF;
 	m_aPaletteRAM[(unAddress + 1) & 0x3FF] = (usnData >> 8) & 0xFF;
+	m_pScheduler->m_ulSystemClock++;
 	break;
 
     case 0x06:
 	m_aV_RAM[unAddress & 0x17FFF] = usnData & 0xFF;
 	m_aV_RAM[(unAddress + 1) & 0x17FFF] = (usnData >> 8) & 0xFF;
+	m_pScheduler->m_ulSystemClock++;
 	break;
 
     case 0x07:
 	m_aOAM[unAddress & 0x3FF] = usnData & 0xFF;
 	m_aOAM[(unAddress + 1) & 0x3FF] = (usnData >> 8) & 0xFF;
+	m_pScheduler->m_ulSystemClock++;
 	break;
     }
 }
@@ -130,6 +187,7 @@ void PPU::WriteWord(uint32_t unAddress, uint32_t unData) {
 	m_aPaletteRAM[(unAddress + 1) & 0x3FF] = (unData >>  8) & 0xFF;
 	m_aPaletteRAM[(unAddress + 2) & 0x3FF] = (unData >> 16) & 0xFF;
 	m_aPaletteRAM[(unAddress + 3) & 0x3FF] = (unData >> 24) & 0xFF;
+	m_pScheduler->m_ulSystemClock += 2;
 	break;
 
     case 0x06:
@@ -137,6 +195,7 @@ void PPU::WriteWord(uint32_t unAddress, uint32_t unData) {
 	m_aV_RAM[(unAddress + 1) & 0x17FFF] = (unData >>  8) & 0xFF;
 	m_aV_RAM[(unAddress + 2) & 0x17FFF] = (unData >> 16) & 0xFF;
 	m_aV_RAM[(unAddress + 3) & 0x17FFF] = (unData >> 24) & 0xFF;
+	m_pScheduler->m_ulSystemClock += 2;
 	break;
 
     case 0x07:
@@ -144,6 +203,7 @@ void PPU::WriteWord(uint32_t unAddress, uint32_t unData) {
 	m_aOAM[(unAddress + 1) & 0x3FF] = (unData >>  8) & 0xFF;
 	m_aOAM[(unAddress + 2) & 0x3FF] = (unData >> 16) & 0xFF;
 	m_aOAM[(unAddress + 3) & 0x3FF] = (unData >> 24) & 0xFF;
+	m_pScheduler->m_ulSystemClock++;
 	break;
     }
 }

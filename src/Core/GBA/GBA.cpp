@@ -47,7 +47,6 @@ void GBA::RunUntilFrame() {
 	}
 
 	m_Cpu->Clock();
-	m_Scheduler.m_ulSystemClock++;
     }
     m_Ppu->bFrameReady = false;
 }

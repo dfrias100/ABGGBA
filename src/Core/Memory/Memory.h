@@ -13,13 +13,16 @@ class PPU;
 class Memory {
 public:
     void InitTest();
+
     void WriteWord(uint32_t unAddress, uint32_t unData, AccessType armAccessType);
     void WriteHalfWord(uint32_t unAddress, uint16_t usnData, AccessType armAccessType);
     void WriteByte(uint32_t unAddress, uint8_t ubyData, AccessType armAccessType);
+    void WriteByteToIo(uint32_t unAddress, uint8_t ubyData);
 
     uint32_t ReadWord(uint32_t unAddress, AccessType armAccessType);
     uint16_t ReadHalfWord(uint32_t unAddress, AccessType armAccessType);
     uint8_t  ReadByte(uint32_t unAddress, AccessType armAccessType);
+    uint8_t  ReadByteFromIo(uint32_t unAddress);
 
     void ConnectPpu(PPU* ppu);
     void ConnectScheduler(Scheduler* pScheduler);
