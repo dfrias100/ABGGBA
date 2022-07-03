@@ -6,36 +6,38 @@ PPU::PPU() {
     std::fill(std::begin(m_aOAM), std::end(m_aOAM), 0x00);
     std::fill(std::begin(m_aPaletteRAM), std::end(m_aPaletteRAM), 0x00);
     std::fill(std::begin(m_aunDisplay), std::end(m_aunDisplay), 0xFF000000);
+    std::memset(&m_ppuDispcnt,  0, sizeof(DISPCNT));
+    std::memset(&m_ppuVcount,   0, sizeof(VCOUNT));
+    std::memset(&m_ppuDispstat, 0, sizeof(DISPSTAT));
 }
 
 void PPU::InitEvents() {
-    m_evtFakeDraw.m_Callback = [&](uint64_t ulLateCycles) {
-	for (size_t i = 0; i < 240 * 160; i++) {
-	    uint8_t ubyColorIndex = m_aV_RAM[i];
-	    uint32_t unGpuColor = 0x00;
-	    uint16_t unGbaColor = m_aPaletteRAM[ubyColorIndex * 2] | m_aPaletteRAM[ubyColorIndex * 2 + 1] << 8;
-	    // 0b?BBBBBgggggrrrrr
+    // TODO: Handle IRQ, DMA, etc. etc. etc
+    m_evtHblank.m_Callback = [&](uint64_t ulCyclesLate) {
+	m_ppuDispstat.ppuHblank = true;
 
-	    uint32_t unColorRed = ((float)(unGbaColor & 0x1F) / (31.0f)) * 255;
-	    uint32_t unColorGreen = ((float)((unGbaColor & (0x1F << 5)) >> 5) / (31.0f)) * 255;
-	    uint32_t unColorBlue = ((float)((unGbaColor & (0x1F << 10)) >> 10) / (31.0f)) * 255;
-
-	    unColorRed = unColorRed <= 255 ? unColorRed : 255;
-	    unColorGreen = unColorGreen <= 255 ? unColorGreen : 255;
-	    unColorBlue = unColorBlue <= 255 ? unColorBlue : 255;
-
-	    unGpuColor |= 0xFF000000;
-	    unGpuColor |= unColorRed << 16;
-	    unGpuColor |= unColorGreen << 8;
-	    unGpuColor |= unColorBlue;
-
-	    m_aunDisplay[i] = unGpuColor;
+	if (m_ppuVcount.ppuScanline < 160) {
+	    DrawScanline();
 	}
-	bFrameReady = true;
-	m_pScheduler->ScheduleEvent(m_evtFakeDraw, 197120 - ulLateCycles);
+
+	m_pScheduler->ScheduleEvent(m_evtEndHblank, 226 - ulCyclesLate);
     };
 
-    m_pScheduler->ScheduleEvent(m_evtFakeDraw, 197120);
+    m_evtEndHblank.m_Callback = [&](uint64_t ulCyclesLate) {
+	m_ppuVcount.ppuScanline = (m_ppuVcount.ppuScanline + 1) % 228;
+	m_ppuDispstat.ppuHblank = false;
+	m_ppuDispstat.ppuVblank = m_ppuVcount.ppuScanline >= 160 && m_ppuVcount.ppuScanline < 227;
+
+	m_ppuDispstat.ppuVcountMatch = m_ppuVcount.ppuScanline == m_ppuDispstat.ppuLyc;
+
+	if (m_ppuVcount.ppuScanline == 160) {
+	    bFrameReady = true;
+	}
+
+	m_pScheduler->ScheduleEvent(m_evtHblank, 1006 - ulCyclesLate);
+    };
+
+    m_pScheduler->ScheduleEvent(m_evtHblank, 1006);
 }
 
 void PPU::WriteByteToRegister(PPU::IoRegister ppuReg, uint8_t ubyData, uint32_t unByteIndex) {
@@ -81,6 +83,34 @@ uint8_t PPU::ReadByteFromRegister(PPU::IoRegister ppuReg, uint32_t unByteIndex) 
 	break;
     }
     return unData;
+}
+
+void PPU::DrawScanline() {
+    std::fill(std::begin(m_aBgPixelScanline), std::end(m_aBgPixelScanline), 0);
+
+    switch (m_ppuDispcnt.ppuBgMode) {
+    case 4: 
+	DrawBG_Mode4();
+	OutputPixels();
+	break;
+    default:
+	std::copy(std::begin(m_aBgPixelScanline), std::end(m_aBgPixelScanline), &m_aunDisplay[m_ppuVcount.ppuScanline * 240]);
+	break;
+    }
+}
+
+void PPU::DrawBG_Mode4() {
+    // TODO: Handle the affine transform
+    for (size_t x = 0; x < 240; x++) {
+	uint32_t addr = m_ppuDispcnt.ppuFrameSelect * 0xA000 + m_ppuVcount.ppuScanline * 240 + x;
+	uint8_t  ubyColorIndex = m_aV_RAM[addr];
+	uint16_t unGbaColor    = m_aPaletteRAM[ubyColorIndex * 2] | m_aPaletteRAM[ubyColorIndex * 2 + 1] << 8;
+	m_aBgPixelScanline[x]  = m_aGpuColorLut[unGbaColor & ~0x8000];
+    }
+}
+
+void PPU::OutputPixels() {
+    std::copy(std::begin(m_aBgPixelScanline), std::end(m_aBgPixelScanline), &m_aunDisplay[m_ppuVcount.ppuScanline * 240]);
 }
 
 uint8_t PPU::ReadByteFromBus(uint32_t unAddress) {
@@ -166,10 +196,13 @@ void PPU::WriteHalf(uint32_t unAddress, uint16_t usnData) {
 	m_pScheduler->m_ulSystemClock++;
 	break;
 
-    case 0x06:
-	m_aV_RAM[unAddress & 0x17FFF] = usnData & 0xFF;
-	m_aV_RAM[(unAddress + 1) & 0x17FFF] = (usnData >> 8) & 0xFF;
-	m_pScheduler->m_ulSystemClock++;
+    case 0x06: 
+	{
+	    uint32_t unNewAddress = unAddress & ((unAddress & 0x1'0000) ? 0x17FFF : 0x0FFFF);
+	    m_aV_RAM[unNewAddress] = usnData & 0xFF;
+	    m_aV_RAM[unNewAddress + 1] = (usnData >> 8) & 0xFF;
+	    m_pScheduler->m_ulSystemClock++;
+	}
 	break;
 
     case 0x07:
@@ -191,11 +224,14 @@ void PPU::WriteWord(uint32_t unAddress, uint32_t unData) {
 	break;
 
     case 0x06:
-	m_aV_RAM[unAddress & 0x17FFF]       =  unData        & 0xFF;
-	m_aV_RAM[(unAddress + 1) & 0x17FFF] = (unData >>  8) & 0xFF;
-	m_aV_RAM[(unAddress + 2) & 0x17FFF] = (unData >> 16) & 0xFF;
-	m_aV_RAM[(unAddress + 3) & 0x17FFF] = (unData >> 24) & 0xFF;
-	m_pScheduler->m_ulSystemClock += 2;
+	{
+	    uint32_t unNewAddress = unAddress & ((unAddress & 0x1'0000) ? 0x17FFF : 0x0FFFF);
+	    m_aV_RAM[unNewAddress] =  unData        & 0xFF;
+	    m_aV_RAM[unNewAddress + 1] = (unData >>  8) & 0xFF;
+	    m_aV_RAM[unNewAddress + 2] = (unData >> 16) & 0xFF;
+	    m_aV_RAM[unNewAddress + 3] = (unData >> 24) & 0xFF;
+	    m_pScheduler->m_ulSystemClock += 2;
+	}
 	break;
 
     case 0x07:

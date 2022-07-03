@@ -26,6 +26,13 @@ uint8_t Memory::ReadByteFromIo(uint32_t unAddress) {
     switch (unAddress) {
         SWITCH_CASE_HALF(PPU::IoRegister::IO_DISPCNT, ubyData = m_Ppu->ReadByteFromRegister(PPU::IoRegister::IO_DISPCNT, AddressOffset))
         SWITCH_CASE_HALF(PPU::IoRegister::IO_DISPSTAT, ubyData = m_Ppu->ReadByteFromRegister(PPU::IoRegister::IO_DISPSTAT, AddressOffset))
+        SWITCH_CASE_HALF(PPU::IoRegister::IO_VCOUNT, ubyData = m_Ppu->ReadByteFromRegister(PPU::IoRegister::IO_VCOUNT, AddressOffset))
+    case 0x04000130:
+        ubyData = 0xFF;
+        break;
+    case 0x04000131:
+        ubyData = 0x3F;
+        break;
     }
     return ubyData;
 }

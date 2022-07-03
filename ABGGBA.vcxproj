@@ -211,6 +211,7 @@
   <ItemGroup>
     <None Include="src\Core\ARM7TDMI\Arithmetic.inl" />
     <None Include="src\Core\ARM7TDMI\Shifts.inl" />
+    <None Include="src\Core\PPU\ColorLookup.inl" />
     <None Include="src\Core\PPU\OAM_Entry.inl" />
     <None Include="src\Core\PPU\PPU_IO.inl" />
   </ItemGroup>

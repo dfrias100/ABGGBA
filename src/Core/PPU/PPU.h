@@ -15,7 +15,7 @@ class PPU {
 public:
     static enum IoRegister {
 	IO_DISPCNT   = 0x04000000,
-	GreenSwap = 0x04000002,
+	GreenSwap    = 0x04000002,
 	IO_DISPSTAT  = 0x04000004,
 	IO_VCOUNT    = 0x04000006
     };
@@ -35,10 +35,19 @@ public:
     void WriteByteToRegister(PPU::IoRegister ppuReg, uint8_t ubyData, uint32_t unByteIndex);
     uint8_t ReadByteFromRegister(PPU::IoRegister ppuReg, uint32_t unByteIndex);
 
+    void DrawScanline();
+    void DrawBG_Mode4();
+
+    void OutputPixels();
+
     uint32_t* GetGraphicsArrayPointer();
 private:
     Scheduler* m_pScheduler = nullptr;
+
     Event m_evtFakeDraw;
+    Event m_evtHblank;
+    Event m_evtEndHblank;
+
     uint8_t m_aV_RAM[96 * 1024];
     uint8_t m_aOAM[1024];
     uint8_t m_aPaletteRAM[1024];
@@ -47,6 +56,10 @@ private:
     DISPCNT  m_ppuDispcnt;
     DISPSTAT m_ppuDispstat;
     VCOUNT   m_ppuVcount;
+
+    uint32_t m_aBgPixelScanline[240];
+
+    #include "ColorLookup.inl"
 };
 
 #endif

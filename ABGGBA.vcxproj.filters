@@ -202,5 +202,8 @@
     <None Include="src\Core\PPU\PPU_IO.inl">
       <Filter>Header Files\Core\PPU</Filter>
     </None>
+    <None Include="src\Core\PPU\ColorLookup.inl">
+      <Filter>Header Files\Core\PPU</Filter>
+    </None>
   </ItemGroup>
 </Project>

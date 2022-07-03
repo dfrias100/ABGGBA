@@ -10,7 +10,7 @@ void Memory::InitTest() {
     std::fill(std::begin(m_aBiosRom), std::end(m_aBiosRom), 0);
     std::fill(std::begin(m_aGamePakRom), std::end(m_aGamePakRom), 0);
 
-    const std::string szTestRomFile = "arm.gba";
+    const std::string szTestRomFile = "pageflip.mb.gba";
     const std::string szBiosRomFile = "gba_bios.bin";
     
     std::ifstream ifsTestRomStream(szTestRomFile, std::ios::binary);
@@ -160,7 +160,6 @@ uint32_t Memory::ReadWord(uint32_t unAddress, AccessType armAccessType) {
 	unData |= ReadByteFromIo(unWordAlignedAddress + 1) << 8;
 	unData |= ReadByteFromIo(unWordAlignedAddress + 2) << 16;
 	unData |= ReadByteFromIo(unWordAlignedAddress + 3) << 24;
-	unData |= ubyStubbedRead; ubyStubbedRead ^= 1;
 	m_pScheduler->m_ulSystemClock++;
 	break;
 
